@@ -1,0 +1,64 @@
+local _, ns = ...
+
+ns.L = {
+  TAB_STEP = "Étape",
+  TAB_LIST = "Liste",
+
+  GROUP_WEEKLY = "Cette semaine",
+  GROUP_DAILY = "Aujourd'hui",
+  GROUP_WORLDQUESTS = "Quêtes mondiales actives",
+  GROUP_SIDEQUESTS = "Quêtes secondaires (%d restantes)",
+  GROUP_RARES = "Rares",
+
+  TYPE_quest = "quête",
+  TYPE_weekly = "hebdo",
+  TYPE_daily = "journalière",
+  TYPE_rare = "rare",
+  TYPE_worldquests = "quêtes mondiales",
+
+  RENOWN_FMT = "Renom %d · %d / %d",
+  REQUIRES_RENOWN = "Renom %d requis",
+  REQUIRES_QUEST = "Quête requise : %s",
+  UNKNOWN_QUEST = "Quête #%d",
+  NEXT_FMT = "Ensuite : %s",
+  NO_STEP = "Rien à faire pour l'instant.",
+  PROGRESS_FMT = "%d/%d",
+  REP_FMT = "+%d rep",
+
+  BTN_PREV = "<",
+  BTN_SKIP = "Passer",
+  BTN_NEXT = ">",
+
+  SOURCE_sidequests = "Quêtes secondaires",
+  SOURCE_weekly = "Activités hebdomadaires",
+  SOURCE_daily = "Journalières",
+  SOURCE_rares = "Rares",
+  SOURCE_worldquests = "Quêtes mondiales",
+
+  SETTINGS_TITLE = "Réglages",
+  SETTINGS_SOURCES = "Sources de réputation",
+  SETTINGS_NAV = "Navigation",
+  NAV_auto = "Automatique",
+  NAV_tomtom = "TomTom",
+  NAV_blizzard = "Repère du jeu",
+  SETTINGS_HIDE_DONE = "Masquer les tâches terminées",
+  SETTINGS_LOCK = "Verrouiller la fenêtre",
+  SETTINGS_CLEAR_SKIPS = "Remettre les étapes passées",
+
+  MANUAL_HINT = "Clic droit : cocher ou décocher à la main",
+
+  DEBUG_HEADER = "Sentier : problèmes détectés",
+  DEBUG_NONE = "Sentier : aucun problème détecté.",
+  DEBUG_MAPS = "Sentier : cartes de Midnight trouvées : %s",
+  DEBUG_NO_MAPS = "aucune",
+  COLLECT_ON = "Sentier : collecte activée.",
+  COLLECT_OFF = "Sentier : collecte désactivée (%d quêtes enregistrées).",
+  HELP = "Sentier : /sentier (afficher ou masquer), /sentier debug, /sentier collect on|off",
+
+  DEFAULT_CATEGORY = "Autres",
+  PROBLEM_GUIDE_DUPLICATE = "Guide en double : %s",
+  PROBLEM_GUIDE_INVALID = "Guide invalide : %s (titre ou catégorie manquant)",
+  PROBLEM_TASK_DUPLICATE = "Tâche en double dans %s : %s",
+  PROBLEM_QUEST_MISSING = "Quête absente du catalogue : %d (%s)",
+  PROBLEM_ORDER_UNKNOWN = "Ordre de %s : tâche inconnue %s",
+}

@@ -2,3 +2,5 @@
 .superpowers/
 __pycache__/
 *.zip
+.venv/
+dist/
