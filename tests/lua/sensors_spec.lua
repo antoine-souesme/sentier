@@ -112,6 +112,20 @@ describe("Sensors", function()
     assert.are.same({ 2413 }, S.FindZoneMaps({ "Harandar" }))
   end)
 
+  it("demande au jeu de charger une quête et ses récompenses", function()
+    local loaded = {}
+    _G.C_QuestLog = { RequestLoadQuestByID = function(id) loaded[#loaded + 1] = id end }
+    _G.C_TaskQuest = { RequestPreloadRewardData = function(id) requested[#requested + 1] = id end }
+    assert.is_true(S.RequestQuestData(42))
+    assert.are.same({ { 42 }, { 42 } }, { loaded, requested })
+  end)
+
+  it("ne lève pas d'erreur si le chargement d'une quête est impossible", function()
+    _G.C_QuestLog = {}
+    assert.is_nil(S.RequestQuestData(42))
+    assert.is_true(H.hasProblem(ns, "Lecture impossible"))
+  end)
+
   describe("Now", function()
     after_each(function() _G.GetServerTime, _G.time = nil, nil end)
 

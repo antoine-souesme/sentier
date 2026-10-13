@@ -17,20 +17,27 @@ function Collect:TrackedFactions()
 end
 
 function Collect:Record(questId, rewards, extra)
+  if not ns.DB.account.collect.enabled then return false end
+  return self:Store(questId, rewards, extra)
+end
+
+-- Garde la réputation d'une quête, sans tenir compte du réglage de collecte.
+-- extra.noPosition : ne pas noter la position du joueur (quête lue à distance).
+function Collect:Store(questId, rewards, extra)
   local store = ns.DB.account.collect
-  if not store.enabled or not questId or not rewards then return false end
+  if not questId or type(rewards) ~= "table" then return false end
 
   local tracked = self:TrackedFactions()
   local kept = {}
   for _, r in ipairs(rewards) do
-    if tracked[r.factionId] and (r.amount or 0) > 0 then
+    if type(r) == "table" and tracked[r.factionId] and (r.amount or 0) > 0 then
       kept[#kept + 1] = { factionId = r.factionId, amount = r.amount }
     end
   end
   if #kept == 0 then return false end
 
   extra = extra or {}
-  local pos = (extra.map and extra) or ns.Sensors.GetPlayerPosition() or {}
+  local pos = (extra.map and extra) or (not extra.noPosition and ns.Sensors.GetPlayerPosition()) or {}
   store.quests[questId] = {
     title = extra.title,
     worldQuest = extra.worldQuest == true,

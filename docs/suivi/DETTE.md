@@ -2,9 +2,9 @@
 
 Décisions mises de côté pour plus tard.
 
-## Contenu des guides de Midnight (2026-10-13)
+## Renom des quêtes non ouvertes (2026-10-13)
 
-Les cinq guides ne déclarent encore aucune quête secondaire, journalière ni rare : seules les deux activités hebdomadaires et les quêtes mondiales apparaissent. L'API de Blizzard ne donne pas la réputation des quêtes de Midnight, donc ce contenu doit venir du mode collecte (`/sentier collect on` en jeu, puis `tools/import_collect.py`). Tant que ce n'est pas fait, le groupe « Quêtes secondaires » reste vide.
+Les quêtes secondaires sont trouvées en demandant au jeu, à la connexion, le renom de chaque quête du catalogue (`C_QuestLog.RequestLoadQuestByID` puis `C_QuestLog.GetQuestLogMajorFactionReputationRewards`). Il n'a pas été possible de vérifier sans le jeu que cette fonction répond pour une quête absente du journal. Si elle ne répond pas, seul le relevé des quêtes ouvertes en jeu remplit les guides, et il faudra trouver une autre source de données.
 
 ## Valeurs à confirmer en jeu (2026-10-13)
 

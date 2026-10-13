@@ -103,6 +103,11 @@ Core:SetScript("OnEvent", function(self, event, ...)
     end
   elseif event == "PLAYER_LOGIN" then
     ns.Collect:ApplyToGuides()
+    ns.Scan:Start()
+    local ticker
+    ticker = C_Timer.NewTicker(0.2, function()
+      if not ns.Scan:Step(20) then ticker:Cancel() end
+    end)
     ns.UI:Create()
     if ns.DB.char.hidden then ns.UI.frame:Hide() end
     for _, e in ipairs(REFRESH_EVENTS) do
@@ -118,6 +123,9 @@ Core:SetScript("OnEvent", function(self, event, ...)
       end
     end
   else
+    if event == "QUEST_DATA_LOAD_RESULT" then
+      ns.Scan:OnLoaded((...))
+    end
     if event == "QUEST_ACCEPTED" and ns.DB.account.collect.enabled then
       local questId = ...
       ns.Collect:Record(questId, ns.Sensors.GetQuestRepRewards(questId), { title = ns.Sensors.GetQuestTitle(questId) })
@@ -157,6 +165,7 @@ local function printDebug()
   local maps = ns.Sensors.FindZoneMaps(worldQuestZones())
   local text = (maps and #maps > 0) and table.concat(maps, L.SEP_LIST) or L.DEBUG_NO_MAPS
   print(L.DEBUG_MAPS:format(text))
+  print(L.DEBUG_SCAN:format(ns.Scan.total, ns.Scan.found, #ns.Scan.queue))
 end
 
 local function countCollected()

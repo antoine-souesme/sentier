@@ -58,6 +58,7 @@ ns.L = {
   DEBUG_NONE = "Sentier : aucun problème détecté.",
   DEBUG_MAPS = "Sentier : cartes des quêtes mondiales trouvées : %s",
   DEBUG_NO_MAPS = "aucune",
+  DEBUG_SCAN = "Sentier : quêtes du catalogue analysées : %d, nouvelles avec du renom : %d, restantes : %d",
   COLLECT_ON = "Sentier : collecte activée.",
   COLLECT_OFF = "Sentier : collecte désactivée (%d quêtes enregistrées).",
   HELP = "Sentier : /sentier (afficher ou masquer), /sentier debug, /sentier collect on|off",

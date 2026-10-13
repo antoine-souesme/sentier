@@ -17,6 +17,7 @@ Sensors\Sensors.lua
 Core\State.lua
 Core\Models.lua
 Core\Collect.lua
+Core\Scan.lua
 Navigation\Navigation.lua
 Guides\Reputation\Midnight\Catalog.lua
 Guides\Reputation\Midnight\Zones.lua

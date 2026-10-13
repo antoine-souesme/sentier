@@ -121,6 +121,15 @@ function S.GetQuestRepRewards(questId)
   return safe("READ_REPUTATION", function() return normalize(C_QuestLog.GetQuestLogMajorFactionReputationRewards(questId)) end)
 end
 
+-- Demande au jeu de charger une quête et ses récompenses ; la réponse arrive par QUEST_DATA_LOAD_RESULT.
+function S.RequestQuestData(questId)
+  return safe("READ_QUEST", function()
+    C_QuestLog.RequestLoadQuestByID(questId)
+    if C_TaskQuest and C_TaskQuest.RequestPreloadRewardData then C_TaskQuest.RequestPreloadRewardData(questId) end
+    return true
+  end)
+end
+
 function S.GetOfferedQuestRepRewards()
   return safe("READ_OFFERED_REPUTATION", function() return normalize(C_QuestOffer.GetQuestOfferMajorFactionReputationRewards()) end)
 end

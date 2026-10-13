@@ -1,30 +1,24 @@
-# Collecter les quêtes de réputation de Midnight
+# Trouver les quêtes de renom de Midnight
 
-L'API de Blizzard ne dit pas combien de réputation donne chaque quête de Midnight. Sentier la relève donc en jeu, pendant que tu joues.
+L'API web de Blizzard ne dit pas combien de renom donne chaque quête de Midnight. Sentier le demande donc directement au jeu.
 
 ## Ce qui se fait tout seul
 
-La collecte est active par défaut. Dès qu'un personnage te propose une quête de Midnight (la fenêtre de la quête s'ouvre), ou dès que tu en acceptes une, Sentier note :
+Tu n'as rien à faire. À chaque connexion, Sentier passe en revue toutes les quêtes de Midnight connues (le catalogue, environ 860 quêtes). Pour chaque quête que ton personnage n'a pas encore faite, il demande au jeu combien de renom elle donne. Celles qui en donnent apparaissent dans le guide de leur faction, dans le groupe « Quêtes secondaires » de l'onglet Liste, et en mode étape juste avant les quêtes mondiales.
 
-- le numéro et le titre de la quête ;
-- la réputation annoncée pour chacune des cinq factions de Midnight ;
-- ta position.
+Cette analyse prend environ dix secondes après la connexion, puis la liste se complète au fur et à mesure que le jeu répond. `/sentier debug` indique où elle en est : nombre de quêtes analysées, nombre de quêtes trouvées avec du renom, et nombre restant.
 
-Une quête qui ne donne de réputation à aucune de ces factions est ignorée. Il n'est pas nécessaire de finir la quête : ouvrir sa fenêtre suffit, même si tu la refuses ensuite.
+Ces quêtes n'ont pas de position : le guide indique leur zone, mais ne pose pas de repère sur la carte.
 
-La quête apparaît aussitôt dans le guide de sa faction, dans le groupe « Quêtes secondaires » de l'onglet Liste, et en mode étape juste avant les quêtes mondiales. Une quête qui donne de la réputation à deux factions apparaît dans les deux guides. Rien d'autre à faire.
+En plus, Sentier note chaque quête de Midnight que tu ouvres ou acceptes en jeu, avec ta position. Cela complète l'analyse si le jeu n'a pas su répondre pour certaines quêtes, et donne leur position. Ce relevé est actif par défaut ; `/sentier collect off` le coupe, `/sentier collect on` le relance.
 
-La collecte est partagée par tous les personnages du même compte, et elle est gardée d'une session à l'autre.
-
-Pour la couper : `/sentier collect off`. Pour la relancer : `/sentier collect on`. Le message de `/sentier collect off` indique combien de quêtes ont été enregistrées.
-
-Pour aller vite, parcours les centres des zones et ouvre la fenêtre des quêtes proposées par les personnages qui ont un point d'exclamation.
+Ce que Sentier a trouvé est gardé d'une session à l'autre et partagé par tous les personnages du même compte.
 
 ## Partager ta collecte avec tes amis
 
-Ce que tu collectes ne sert qu'à toi. Pour que tes amis en profitent, il faut écrire ces quêtes dans les fichiers des guides, puis leur redonner l'addon. Les étapes ci-dessous expliquent comment faire.
+L'analyse automatique fonctionne aussi chez tes amis, donc cette partie est facultative. Elle sert seulement à leur donner les positions des quêtes que tu as ouvertes en jeu. Pour cela, il faut écrire ces quêtes dans les fichiers des guides, puis leur redonner l'addon. Les étapes ci-dessous expliquent comment faire.
 
-C'est à refaire seulement quand tu as collecté de nouvelles quêtes, en général après un patch. Le script ignore les quêtes déjà écrites dans les guides, donc le relancer ne crée pas de doublons.
+Le script ignore les quêtes déjà écrites dans les guides, donc le relancer ne crée pas de doublons.
 
 ## 1. Le fichier de sauvegarde du compte
 
@@ -134,7 +128,7 @@ Un prérequis peut aussi être une autre quête : `requires = { { quest = 91234,
 
 ## En cas de souci
 
-- **Une quête ouverte n'apparaît pas dans le guide** : vérifie qu'elle donne bien de la réputation à une faction de Midnight, que la collecte n'a pas été coupée avec `/sentier collect off`, et que la source « quêtes secondaires » est cochée dans les réglages.
+- **Aucune quête secondaire n'apparaît** : tape `/sentier debug`. Si le nombre de quêtes trouvées avec du renom reste à 0 alors qu'il n'en reste plus à analyser, le jeu ne donne pas le renom des quêtes qu'on n'a pas ouvertes. Dans ce cas, seul le relevé des quêtes ouvertes en jeu fonctionne. Vérifie aussi que la source « quêtes secondaires » est cochée dans les réglages.
 - **Le script ne trouve pas le fichier** : vérifie le chemin et les guillemets. Sur Mac, tu peux glisser le fichier dans le terminal pour écrire son chemin.
 - **Le script s'arrête avec une erreur de lecture** : le fichier a peut-être été copié pendant que le jeu l'écrivait. Ferme le jeu, puis copie-le de nouveau.
 - **Après un patch** : relance aussi `python3 tools/build_catalog.py` pour mettre à jour le catalogue des quêtes (noms et zones).

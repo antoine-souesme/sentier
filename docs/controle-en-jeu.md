@@ -15,5 +15,6 @@
 - [ ] Avec TomTom : la flèche TomTom apparaît. Sans TomTom (ou réglage « Repère du jeu ») : le repère officiel apparaît.
 - [ ] Les valeurs de renom affichées (niveau, points) sont les vraies valeurs du jeu pour chaque faction.
 - [ ] Réglages : couper une source la retire des deux onglets ; « Masquer les tâches terminées » fonctionne ; « Remettre les étapes passées » fonctionne.
+- [ ] Une minute après la connexion, `/sentier debug` indique plus de 0 « nouvelles avec du renom », et le groupe « Quêtes secondaires » de chaque guide se remplit sans avoir ouvert de quête.
 - [ ] Sans rien taper, ouvrir une quête de Midnight qui donne de la réputation : elle apparaît aussitôt dans « Quêtes secondaires » du guide de sa faction. `/sentier collect off` indique au moins 1 quête enregistrée.
 - [ ] Après un reset (ou le lendemain) : les coches manuelles hebdomadaires ou journalières ont disparu comme prévu.

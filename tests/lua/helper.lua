@@ -9,6 +9,7 @@ H.FILES = {
   "Sentier/Core/State.lua",
   "Sentier/Core/Models.lua",
   "Sentier/Core/Collect.lua",
+  "Sentier/Core/Scan.lua",
   "Sentier/Navigation/Navigation.lua",
 }
 
