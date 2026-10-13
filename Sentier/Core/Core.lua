@@ -102,6 +102,7 @@ Core:SetScript("OnEvent", function(self, event, ...)
       self:UnregisterEvent("ADDON_LOADED")
     end
   elseif event == "PLAYER_LOGIN" then
+    ns.Collect:ApplyToGuides()
     ns.UI:Create()
     if ns.DB.char.hidden then ns.UI.frame:Hide() end
     for _, e in ipairs(REFRESH_EVENTS) do

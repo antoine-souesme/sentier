@@ -8,7 +8,7 @@ local ACCOUNT_DEFAULTS = {
   nav = "auto",
   hideDone = false,
   locked = false,
-  collect = { enabled = false, quests = {} },
+  collect = { enabled = true, quests = {} },
 }
 
 local CHAR_DEFAULTS = {

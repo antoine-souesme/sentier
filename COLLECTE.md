@@ -1,14 +1,36 @@
 # Collecter les quêtes de réputation de Midnight
 
-L'API de Blizzard ne dit pas combien de réputation donne chaque quête de Midnight. Sentier la relève donc en jeu, pendant que tu joues, puis un script transforme ce relevé en lignes à coller dans les guides. Ce guide explique chaque étape.
+L'API de Blizzard ne dit pas combien de réputation donne chaque quête de Midnight. Sentier la relève donc en jeu, pendant que tu joues.
 
-À refaire seulement quand un patch ajoute de nouvelles quêtes. Le script ignore les quêtes déjà présentes dans les guides, donc relancer une collecte ne crée pas de doublons.
+## Ce qui se fait tout seul
+
+La collecte est active par défaut. Dès qu'un personnage te propose une quête de Midnight (la fenêtre de la quête s'ouvre), ou dès que tu en acceptes une, Sentier note :
+
+- le numéro et le titre de la quête ;
+- la réputation annoncée pour chacune des cinq factions de Midnight ;
+- ta position.
+
+Une quête qui ne donne de réputation à aucune de ces factions est ignorée. Il n'est pas nécessaire de finir la quête : ouvrir sa fenêtre suffit, même si tu la refuses ensuite.
+
+La quête apparaît aussitôt dans le guide de sa faction, dans le groupe « Quêtes secondaires » de l'onglet Liste, et en mode étape juste avant les quêtes mondiales. Une quête qui donne de la réputation à deux factions apparaît dans les deux guides. Rien d'autre à faire.
+
+La collecte est partagée par tous les personnages du même compte, et elle est gardée d'une session à l'autre.
+
+Pour la couper : `/sentier collect off`. Pour la relancer : `/sentier collect on`. Le message de `/sentier collect off` indique combien de quêtes ont été enregistrées.
+
+Pour aller vite, parcours les centres des zones et ouvre la fenêtre des quêtes proposées par les personnages qui ont un point d'exclamation.
+
+## Partager ta collecte avec tes amis
+
+Ce que tu collectes ne sert qu'à toi. Pour que tes amis en profitent, il faut écrire ces quêtes dans les fichiers des guides, puis leur redonner l'addon. Les étapes ci-dessous expliquent comment faire.
+
+C'est à refaire seulement quand tu as collecté de nouvelles quêtes, en général après un patch. Le script ignore les quêtes déjà écrites dans les guides, donc le relancer ne crée pas de doublons.
 
 ## 1. Le fichier de sauvegarde du compte
 
 World of Warcraft enregistre les données de chaque addon dans des fichiers appelés « SavedVariables ». Sentier en a deux :
 
-- un fichier **du compte**, partagé par tous tes personnages : il contient les réglages et les données de collecte ;
+- un fichier **du compte**, partagé par tous tes personnages : il contient les réglages et la collecte ;
 - un fichier **par personnage** : guide choisi, étape en cours, coches manuelles.
 
 La collecte est dans le fichier du compte, à cet endroit :
@@ -23,24 +45,11 @@ Sur Mac, le dossier de WoW est en général `/Applications/World of Warcraft`. S
 
 Attention à ne pas confondre avec le fichier par personnage, rangé plus loin dans `Account/<COMPTE>/<Royaume>/<Personnage>/SavedVariables/Sentier.lua`. Celui-là ne contient pas la collecte.
 
-Le jeu n'écrit ce fichier qu'à trois moments : `/reload`, la déconnexion, ou la fermeture du jeu. Tant que tu n'as pas fait l'un des trois, le fichier ne contient pas ta dernière collecte.
+Le jeu n'écrit ce fichier qu'à trois moments : `/reload`, la déconnexion, ou la fermeture du jeu. Tant que tu n'as pas fait l'un des trois, le fichier ne contient pas tes dernières quêtes collectées.
 
-## 2. Collecter en jeu
+## 2. Faire écrire le fichier par le jeu
 
-1. Connecte-toi avec un personnage qui a accès aux zones de Midnight.
-2. Tape `/sentier collect on`. Le message « Sentier : collecte activée. » s'affiche.
-3. Joue normalement dans les zones de Midnight. Sentier note une quête à deux moments :
-   - quand un personnage te la propose (la fenêtre de la quête s'ouvre) ;
-   - quand tu l'acceptes.
-
-   Il garde le numéro de la quête, son titre, la réputation annoncée pour chacune des cinq factions de Midnight, et ta position. Une quête qui ne donne de réputation à aucune de ces factions est ignorée. Il n'est pas nécessaire de finir la quête : il suffit d'ouvrir sa fenêtre.
-4. Pour aller vite, parcours les centres des zones et parle aux personnages qui ont un point d'exclamation. Tu peux ouvrir la fenêtre d'une quête puis la refuser : elle est quand même notée.
-5. Quand tu as fini, tape `/sentier collect off`. Le message indique combien de quêtes ont été enregistrées, par exemple « Sentier : collecte désactivée (42 quêtes enregistrées). »
-6. Tape `/reload` pour que le jeu écrive le fichier de sauvegarde.
-
-Les quêtes mondiales sont aussi notées, mais le script ne les propose pas : les guides les lisent déjà en direct dans le jeu.
-
-La collecte reste en mémoire d'une session à l'autre. Tu peux collecter en plusieurs fois, avec plusieurs personnages du même compte, puis lancer le script une seule fois à la fin.
+Le jeu n'écrit le fichier de sauvegarde qu'à un `/reload`, à la déconnexion ou à la fermeture du jeu. Avant d'aller plus loin, tape `/reload` ou quitte le jeu.
 
 ## 3. Récupérer le fichier
 
@@ -70,7 +79,7 @@ G:Quest(91877, { rep = 150, title = "Racines profondes", map = 2413, x = 30.1, y
 
 Une quête qui donne de la réputation à deux factions apparaît dans les deux fichiers.
 
-Si le script affiche « Rien de nouveau à ajouter. », soit la collecte est vide (as-tu fait `/reload` ?), soit toutes les quêtes collectées sont déjà dans les guides.
+Si le script affiche « Rien de nouveau à ajouter. », soit le fichier n'a pas encore été écrit (as-tu fait `/reload` ?), soit toutes les quêtes collectées sont déjà dans les guides.
 
 ## 5. Coller les lignes dans les guides
 
@@ -84,7 +93,7 @@ Les guides sont dans `Sentier/Guides/Reputation/Midnight/`. Les fichiers corresp
 | `Singularity.lua` | La Singularité |
 | `ZuljarraForces.lua` | Forces de Zul’jarra |
 
-Pour `Amani.lua`, `SilvermoonCourt.lua`, `Harati.lua` et `Singularity.lua`, le fichier se termine par la ligne `ns.MidnightShared.Standard(G)`. Colle les lignes `G:Quest(...)` juste en dessous. Les quêtes apparaissent alors dans l'onglet Liste, dans le groupe « Quêtes secondaires ».
+Pour `Amani.lua`, `SilvermoonCourt.lua`, `Harati.lua` et `Singularity.lua`, le fichier se termine par la ligne `ns.MidnightShared.Standard(G)`. Colle les lignes `G:Quest(...)` juste en dessous. Les quêtes apparaissent alors dans l'onglet Liste, dans le groupe « Quêtes secondaires », chez tous ceux qui ont l'addon.
 
 Pour qu'elles apparaissent aussi en mode étape, ajoute ensuite une ligne `G:Order` qui reprend l'ordre complet, avec les numéros des quêtes à l'endroit voulu :
 
@@ -125,7 +134,7 @@ Un prérequis peut aussi être une autre quête : `requires = { { quest = 91234,
 
 ## En cas de souci
 
-- **Le message de collecte indique 0 quête** : vérifie que tu as bien ouvert la fenêtre de quêtes qui donnent de la réputation de Midnight, et que la collecte était activée à ce moment-là.
+- **Une quête ouverte n'apparaît pas dans le guide** : vérifie qu'elle donne bien de la réputation à une faction de Midnight, que la collecte n'a pas été coupée avec `/sentier collect off`, et que la source « quêtes secondaires » est cochée dans les réglages.
 - **Le script ne trouve pas le fichier** : vérifie le chemin et les guillemets. Sur Mac, tu peux glisser le fichier dans le terminal pour écrire son chemin.
 - **Le script s'arrête avec une erreur de lecture** : le fichier a peut-être été copié pendant que le jeu l'écrivait. Ferme le jeu, puis copie-le de nouveau.
 - **Après un patch** : relance aussi `python3 tools/build_catalog.py` pour mettre à jour le catalogue des quêtes (noms et zones).

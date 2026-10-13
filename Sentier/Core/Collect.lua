@@ -40,5 +40,40 @@ function Collect:Record(questId, rewards, extra)
     y = pos.y,
     seen = ns.Sensors.Now(),
   }
+  if not store.quests[questId].worldQuest then self:ApplyToGuides() end
   return true
+end
+
+-- Place une tâche avant les quêtes mondiales dans l'ordre du guide, sinon à la fin.
+local function insertInOrder(guide, task)
+  for i, t in ipairs(guide.order) do
+    if t.type == "worldquests" then
+      table.insert(guide.order, i, task)
+      return
+    end
+  end
+  guide.order[#guide.order + 1] = task
+end
+
+-- Ajoute aux guides les quêtes collectées qu'ils ne déclarent pas encore.
+function Collect:ApplyToGuides()
+  local byFaction = {}
+  for _, guide in ipairs(ns.Registry:List()) do
+    if guide.faction then
+      byFaction[guide.faction] = byFaction[guide.faction] or {}
+      table.insert(byFaction[guide.faction], guide)
+    end
+  end
+  for questId, q in pairs(ns.DB.account.collect.quests) do
+    if type(q) == "table" and not q.worldQuest and type(q.rewards) == "table" then
+      for _, r in ipairs(q.rewards) do
+        for _, guide in ipairs(type(r) == "table" and byFaction[r.factionId] or {}) do
+          if not guide.byId[tostring(questId)] then
+            local task = guide:Quest(questId, { rep = r.amount, title = q.title, map = q.map, x = q.x, y = q.y })
+            insertInOrder(guide, task)
+          end
+        end
+      end
+    end
+  end
 end
