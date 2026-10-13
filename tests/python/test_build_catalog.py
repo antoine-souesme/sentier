@@ -43,3 +43,18 @@ def test_render_lua_is_sorted_and_valid():
     assert lines[3] == '  [10] = { title = "Dix", zone = "Zone A", area = 1, minLevel = 83 },'
     assert lines[4] == '  [12] = { title = "Douze", zone = "Zone B", area = 2, minLevel = nil },'
     assert lines[5] == "}"
+
+
+def test_untitled_quest_is_stored_as_none_and_rendered_as_nil():
+    client = FakeClient({
+        "/data/wow/quest/area/1": {"quests": [{"id": 20}, {"id": 21}]},
+        "/data/wow/quest/20": {"id": 20, "title": ""},
+        "/data/wow/quest/21": {"id": 21},
+    })
+    catalog = fetch_catalog(client, {1: "Zone A"}, workers=1)
+    assert catalog[20]["title"] is None
+    assert catalog[21]["title"] is None
+    text = render_lua(catalog)
+    lines = text.splitlines()
+    assert lines[0] == "-- Généré par tools/build_catalog.py. Ne pas modifier à la main."
+    assert lines[3] == '  [20] = { title = nil, zone = "Zone A", area = 1, minLevel = nil },'

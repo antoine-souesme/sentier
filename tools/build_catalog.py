@@ -30,7 +30,7 @@ def fetch_catalog(client, areas=MIDNIGHT_AREAS, workers=3):
             details = list(pool.map(lambda qid: client.get(f"/data/wow/quest/{qid}"), ids))
         for detail in details:
             catalog[detail["id"]] = {
-                "title": detail.get("title") or "",
+                "title": detail.get("title") or None,
                 "zone": areas[area_id],
                 "area": area_id,
                 "min_level": (detail.get("requirements") or {}).get("min_character_level"),
@@ -52,8 +52,9 @@ def render_lua(catalog):
     for qid in sorted(catalog):
         q = catalog[qid]
         level = q["min_level"] if q["min_level"] is not None else "nil"
+        title = lua_string(q["title"]) if q["title"] else "nil"
         lines.append(
-            f'  [{qid}] = {{ title = {lua_string(q["title"])}, zone = {lua_string(q["zone"])}, '
+            f'  [{qid}] = {{ title = {title}, zone = {lua_string(q["zone"])}, '
             f'area = {q["area"]}, minLevel = {level} }},'
         )
     lines.append("}")
