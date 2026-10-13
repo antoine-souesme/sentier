@@ -1,6 +1,6 @@
 # Ajouter du contenu aux guides
 
-1. La collecte est active par défaut (`/sentier collect off` pour la couper). Les quêtes collectées s'affichent déjà dans les guides du joueur qui les a collectées ; ces étapes servent à les écrire dans les guides pour tout le monde. Détails : `COLLECTE.md`.
+1. La collecte est active par défaut (`/sentier collect off` pour la couper). Les quêtes collectées s'affichent déjà dans les guides du joueur qui les a collectées ; ces étapes servent à les écrire dans les guides pour tout le monde.
 2. Jouer normalement dans les zones de Midnight : chaque quête proposée ou acceptée qui donne de la réputation à une faction suivie est notée, avec la position. Les quêtes mondiales sont notées aussi, mais restent lues en direct par le guide.
 3. Taper `/reload` pour que WoW écrive le fichier de sauvegarde.
 4. Lancer `python3 tools/import_collect.py "<WoW>/_retail_/WTF/Account/<COMPTE>/SavedVariables/Sentier.lua"`.

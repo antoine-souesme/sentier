@@ -31,7 +31,7 @@ busted                       # tests Lua
 ## Outils
 
 - `python3 tools/build_catalog.py` : régénère le catalogue des quêtes de Midnight (identifiants Blizzard dans `.env` : `BLIZZARD_CLIENT_ID`, `BLIZZARD_CLIENT_SECRET`). À relancer à chaque patch.
-- `python3 tools/import_collect.py <SavedVariables/Sentier.lua>` : propose des lignes `G:Quest(...)` à partir du mode collecte. Voir `COLLECTE.md`.
+- `python3 tools/import_collect.py <SavedVariables/Sentier.lua>` : propose des lignes `G:Quest(...)` à partir du mode collecte. Voir `docs/contenu.md`.
 - `tools/package.sh` : crée l'archive à partager.
 
 ## Commandes en jeu
