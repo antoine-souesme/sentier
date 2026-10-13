@@ -97,6 +97,35 @@ describe("Sensors", function()
     _G.C_QuestLog = { GetQuestLogMajorFactionReputationRewards = function() return { { factionID = 2696, rewardAmount = 250 } } end }
     assert.are.same({ { factionId = 2696, amount = 250 } }, S.GetQuestRepRewards(5))
   end)
+  it("ne redemande pas les récompenses d'une quête déjà demandée pendant la session", function()
+    fakeWorldQuests({ [2437] = { { questID = 12 } } })
+    S.GetActiveWorldQuests(2696, { 2437 })
+    S.GetActiveWorldQuests(2696, { 2437 })
+    assert.are.same({ 12 }, requested)
+  end)
+
+  it("ne garde pas en mémoire une recherche de cartes vide", function()
+    local ready = false
+    _G.C_Map = { GetMapInfo = function(id) if ready and id == 2413 then return { name = "Harandar" } end end }
+    assert.are.same({}, S.FindZoneMaps({ "Harandar" }))
+    ready = true
+    assert.are.same({ 2413 }, S.FindZoneMaps({ "Harandar" }))
+  end)
+
+  describe("Now", function()
+    after_each(function() _G.GetServerTime, _G.time = nil, nil end)
+
+    it("utilise l'heure du serveur quand elle existe", function()
+      _G.GetServerTime = function() return 123456 end
+      assert.are.equal(123456, S.Now())
+    end)
+
+    it("se rabat sur l'heure locale sans heure du serveur", function()
+      _G.GetServerTime = nil
+      _G.time = function() return 777 end
+      assert.are.equal(777, S.Now())
+    end)
+  end)
   describe("GetOfferedQuest", function()
     after_each(function() _G.GetQuestID, _G.GetTitleText = nil, nil end)
 

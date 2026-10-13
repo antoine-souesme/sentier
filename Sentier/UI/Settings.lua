@@ -62,6 +62,9 @@ function Settings:Create(anchor)
     end
     ns.DB.account.nav = NAV_MODES[index % #NAV_MODES + 1]
     navLabel()
+    -- Le nouveau mode s'applique tout de suite : on retire le repère puis on le replace.
+    ns.Navigation:Clear()
+    ns.Core:Refresh()
   end)
   y = y - 28
 

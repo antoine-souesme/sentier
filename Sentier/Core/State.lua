@@ -37,6 +37,10 @@ function State:TaskStatus(guide, task)
 
   if task.type == "worldquests" then
     local maps = ns.Sensors.FindZoneMaps(task.zones or {})
+    if maps and #maps == 0 then
+      ns.Registry:Problem(L.PROBLEM_NO_ZONE_MAPS:format(guide.id))
+      return "unknown", info
+    end
     local list = maps and ns.Sensors.GetActiveWorldQuests(task.factions[1], maps)
     if not list then return "unknown", info end
     info.worldQuests = list

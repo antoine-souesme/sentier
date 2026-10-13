@@ -46,23 +46,30 @@ function Core:Refresh()
   self.result = result
   self:CollectWorldQuests(result)
 
-  -- Quand l'étape en cours change, on revient dessus et on déplace le repère.
-  -- La clé est gardée par personnage ; on replace aussi le repère quand rien n'est
-  -- ciblé dans cette session (après connexion ou /reload, TomTom ne garde pas le sien).
+  -- Quand l'étape en cours change, on revient dessus. La clé est gardée par personnage.
+  -- Le repère est replacé quand l'étape change, quand rien n'est ciblé dans cette session
+  -- (après connexion ou /reload, TomTom ne garde pas le sien) ou quand la cible de l'étape
+  -- a bougé : la tâche des quêtes mondiales garde la même clé quand sa première quête est
+  -- finie. On compare à la dernière cible posée ici, pas au repère en cours, pour ne pas
+  -- écraser un repère choisi à la main dans la fenêtre.
   local current = result.steps[1]
   local key = current and (guide.id .. ":" .. current.task.key)
   local changed = key ~= ns.DB:GetStep()
-  if changed or not ns.Navigation.target then
-    if changed then
-      ns.DB:SetStep(key)
-      ns.UI.viewIndex = 1
-    end
-    local target = current and ns.Models.Target(current)
-    if target then
+  if changed then
+    ns.DB:SetStep(key)
+    ns.UI.viewIndex = 1
+  end
+  local target = current and ns.Models.Target(current)
+  local last = self.autoTarget
+  if target then
+    local moved = not last or last.map ~= target.map or last.x ~= target.x or last.y ~= target.y
+    if changed or moved or not ns.Navigation.target then
       ns.Navigation:SetTarget(target.map, target.x, target.y, target.title)
-    else
-      ns.Navigation:Clear()
+      self.autoTarget = target
     end
+  elseif changed or last then
+    ns.Navigation:Clear()
+    self.autoTarget = nil
   end
 
   ns.UI:Render(result)

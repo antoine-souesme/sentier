@@ -21,7 +21,12 @@ local function normalize(rewards)
   return out
 end
 
+-- Heure du serveur quand le jeu la donne : les resets sont calés sur elle.
 function S.Now()
+  if type(GetServerTime) == "function" then
+    local ok, now = pcall(GetServerTime)
+    if ok and type(now) == "number" then return now end
+  end
   return time()
 end
 
@@ -46,6 +51,10 @@ function S.GetRenown(factionId)
   end)
 end
 
+-- Quêtes dont les récompenses ont déjà été demandées pendant la session :
+-- on ne les redemande pas, sinon chaque réponse relancerait un recalcul puis une demande.
+local preloadRequested = {}
+
 function S.GetActiveWorldQuests(factionId, mapIds)
   return safe("READ_WORLD_QUESTS", function()
     local getQuests = C_TaskQuest.GetQuestsOnMap or C_TaskQuest.GetQuestsForPlayerByMapID
@@ -68,7 +77,8 @@ function S.GetActiveWorldQuests(factionId, mapIds)
               x = q.x and q.x * 100,
               y = q.y and q.y * 100,
             }
-          elseif not HaveQuestRewardData(id) then
+          elseif not preloadRequested[id] and not HaveQuestRewardData(id) then
+            preloadRequested[id] = true
             C_TaskQuest.RequestPreloadRewardData(id)
           end
         end
@@ -102,7 +112,8 @@ function S.FindZoneMaps(names)
     end
     return list
   end)
-  mapCache[cacheKey] = found
+  -- Une liste vide n'est pas gardée : les cartes peuvent ne pas être prêtes juste après la connexion.
+  if found and #found > 0 then mapCache[cacheKey] = found end
   return found
 end
 

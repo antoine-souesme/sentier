@@ -81,7 +81,7 @@ function Guide:Quest(questId, opts)
   end
   if not task.title then
     task.missing = true
-    Registry:Problem(L.PROBLEM_QUEST_MISSING:format(questId, self.id))
+    Registry:Problem(L.PROBLEM_QUEST_MISSING:format(tostring(questId), self.id))
   end
   return self:Add(task)
 end

@@ -84,6 +84,14 @@ describe("State", function()
     assert.are.equal(50, info.worldQuests[1].questId)
   end)
 
+  it("les quêtes mondiales sont inconnues quand aucune carte n'est trouvée", function()
+    local t = g:WorldQuests({ zones = { "Harandar" } })
+    ns.Sensors.zoneMaps = {}
+    ns.Sensors.worldQuests[2696] = {}
+    assert.are.equal("unknown", status(t))
+    assert.is_true(H.hasProblem(ns, "Aucune carte trouvée pour les quêtes mondiales de rep-a"))
+  end)
+
   describe("Evaluate", function()
     it("suit l'ordre et saute les tâches faites, passées ou dont la source est coupée", function()
       g:Quest(1, {})

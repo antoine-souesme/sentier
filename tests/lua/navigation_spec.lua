@@ -73,4 +73,42 @@ describe("Navigation", function()
     assert.is_false(ns.Navigation:SetTarget(2437, 45, 60, "A"))
     assert.is_true(H.hasProblem(ns, "Repère impossible sur la carte 2437"))
   end)
+  it("ne lève pas d'erreur et signale un problème quand TomTom échoue", function()
+    installTomTom()
+    _G.TomTom.AddWaypoint = function() error("boom") end
+    local ok
+    assert.has_no.errors(function() ok = ns.Navigation:SetTarget(2437, 45, 60, "A") end)
+    assert.is_false(ok)
+    assert.is_nil(ns.Navigation.target)
+    assert.is_nil(ns.Navigation.tomtomUid)
+    assert.is_true(H.hasProblem(ns, "Repère impossible sur la carte 2437"))
+  end)
+
+  it("signale un problème quand TomTom ne renvoie pas de point", function()
+    installTomTom()
+    _G.TomTom.AddWaypoint = function() return nil end
+    assert.is_false(ns.Navigation:SetTarget(2437, 45, 60, "A"))
+    assert.is_true(H.hasProblem(ns, "Repère impossible sur la carte 2437"))
+  end)
+
+  it("ne lève pas d'erreur quand TomTom échoue à retirer un point", function()
+    installTomTom()
+    ns.Navigation:SetTarget(2437, 45, 60, "A")
+    _G.TomTom.RemoveWaypoint = function() error("boom") end
+    assert.has_no.errors(function() ns.Navigation:Clear() end)
+    assert.is_nil(ns.Navigation.tomtomUid)
+  end)
+
+  it("retire le repère du jeu même si le suivi a échoué", function()
+    _G.C_SuperTrack.SetSuperTrackedUserWaypoint = function() error("boom") end
+    assert.is_false(ns.Navigation:SetTarget(2437, 45, 60, "A"))
+    ns.Navigation:Clear()
+    assert.are.same({ "clear" }, calls[2])
+  end)
+
+  it("ne lève pas d'erreur avec une carte non numérique", function()
+    _G.C_Map.SetUserWaypoint = function() error("boom") end
+    assert.has_no.errors(function() ns.Navigation:SetTarget("x", 45, 60, "A") end)
+    assert.is_true(H.hasProblem(ns, "Repère impossible sur la carte x"))
+  end)
 end)

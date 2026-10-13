@@ -28,6 +28,7 @@ function H.fakeSensors()
     renown = {},
     worldQuests = {},
     objectives = {},
+    zoneMaps = { 2437 },
     position = nil,
   }
   f.Now = function() return f.now end
@@ -38,7 +39,7 @@ function H.fakeSensors()
   end
   f.GetRenown = function(faction) return f.renown[faction] end
   f.GetActiveWorldQuests = function(faction) return f.worldQuests[faction] end
-  f.FindZoneMaps = function() return {} end
+  f.FindZoneMaps = function() return f.zoneMaps end
   f.GetWeeklyResetStart = function() return f.weeklyStart end
   f.GetSecondsUntilDailyReset = function() return f.dailyUntil end
   f.GetObjectiveProgress = function(questId) return f.objectives[questId] end
