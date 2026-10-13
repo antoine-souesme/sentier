@@ -47,7 +47,14 @@ ns.L = {
 
   MANUAL_HINT = "Clic droit : cocher ou décocher à la main",
 
+  STEP_KIND_FMT = "%s  |cff8a8270(%s)|r",
+  ICON_UNKNOWN = "? ",
+  SEP_LABEL = " : ",
+  SEP_REASON = " · ",
+  SEP_LIST = ", ",
+
   DEBUG_HEADER = "Sentier : problèmes détectés",
+  DEBUG_PROBLEM = "  %s",
   DEBUG_NONE = "Sentier : aucun problème détecté.",
   DEBUG_MAPS = "Sentier : cartes de Midnight trouvées : %s",
   DEBUG_NO_MAPS = "aucune",

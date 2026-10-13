@@ -1,0 +1,32 @@
+## Interface: 120100
+## Title: Sentier
+## Notes: Guides en jeu : réputation de Midnight, et plus tard d'autres guides.
+## Author: Antoine
+## Version: 0.1.0
+## SavedVariables: SentierDB
+## SavedVariablesPerCharacter: SentierCharDB
+## OptionalDeps: TomTom
+## IconTexture: Interface\Icons\INV_Misc_Map_01
+## AddonCompartmentFunc: Sentier_OnAddonCompartmentClick
+
+Locales\fr.lua
+Core\Registry.lua
+Core\Reset.lua
+Core\DB.lua
+Sensors\Sensors.lua
+Core\State.lua
+Core\Models.lua
+Core\Collect.lua
+Navigation\Navigation.lua
+Guides\Reputation\Midnight\Catalog.lua
+Guides\Reputation\Midnight\Zones.lua
+Guides\Reputation\Midnight\Amani.lua
+Guides\Reputation\Midnight\SilvermoonCourt.lua
+Guides\Reputation\Midnight\Harati.lua
+Guides\Reputation\Midnight\Singularity.lua
+Guides\Reputation\Midnight\ZuljarraForces.lua
+UI\StepTab.lua
+UI\ListTab.lua
+UI\Settings.lua
+UI\MainFrame.lua
+Core\Core.lua
