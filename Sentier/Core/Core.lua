@@ -25,6 +25,7 @@ end
 function Core:SetGuide(id)
   ns.DB.char.guide = id
   ns.DB:SetStep(nil)
+  ns.Navigation:Clear()
   self:Refresh()
 end
 
@@ -46,14 +47,22 @@ function Core:Refresh()
   self:CollectWorldQuests(result)
 
   -- Quand l'étape en cours change, on revient dessus et on déplace le repère.
-  -- La clé est gardée par personnage : un /reload ne replace pas le repère du joueur.
+  -- La clé est gardée par personnage ; on replace aussi le repère quand rien n'est
+  -- ciblé dans cette session (après connexion ou /reload, TomTom ne garde pas le sien).
   local current = result.steps[1]
   local key = current and (guide.id .. ":" .. current.task.key)
-  if key ~= ns.DB:GetStep() then
-    ns.DB:SetStep(key)
-    ns.UI.viewIndex = 1
+  local changed = key ~= ns.DB:GetStep()
+  if changed or not ns.Navigation.target then
+    if changed then
+      ns.DB:SetStep(key)
+      ns.UI.viewIndex = 1
+    end
     local target = current and ns.Models.Target(current)
-    if target then ns.Navigation:SetTarget(target.map, target.x, target.y, target.title) end
+    if target then
+      ns.Navigation:SetTarget(target.map, target.x, target.y, target.title)
+    else
+      ns.Navigation:Clear()
+    end
   end
 
   ns.UI:Render(result)
@@ -88,7 +97,9 @@ Core:SetScript("OnEvent", function(self, event, ...)
   elseif event == "PLAYER_LOGIN" then
     ns.UI:Create()
     if ns.DB.char.hidden then ns.UI.frame:Hide() end
-    for _, e in ipairs(REFRESH_EVENTS) do pcall(self.RegisterEvent, self, e) end
+    for _, e in ipairs(REFRESH_EVENTS) do
+      if not pcall(self.RegisterEvent, self, e) then ns.Registry:Problem(L.PROBLEM_EVENT:format(e)) end
+    end
     self:Refresh()
     self:ScheduleReset()
   elseif event == "QUEST_DETAIL" then

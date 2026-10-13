@@ -53,7 +53,7 @@ function Settings:Create(anchor)
   local nav = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
   nav:SetSize(220, 22)
   nav:SetPoint("TOPLEFT", 10, y)
-  local function navLabel() nav:SetText(L.SETTINGS_NAV .. L.SEP_LABEL .. L["NAV_" .. ns.DB.account.nav]) end
+  local function navLabel() nav:SetText(L.SETTINGS_NAV .. L.SEP_LABEL .. (L["NAV_" .. tostring(ns.DB.account.nav)] or L.NAV_auto)) end
   nav:SetScript("OnShow", navLabel)
   nav:SetScript("OnClick", function()
     local index = 1
