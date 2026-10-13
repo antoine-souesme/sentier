@@ -62,6 +62,7 @@ ns.L = {
   PROBLEM_QUEST_MISSING = "Quête absente du catalogue : %d (%s)",
   PROBLEM_ORDER_UNKNOWN = "Ordre de %s : tâche inconnue %s",
   PROBLEM_READ = "Lecture impossible (%s) : %s",
+  PROBLEM_WAYPOINT = "Repère impossible sur la carte %d",
   READ_QUEST = "quête",
   READ_OBJECTIVE = "objectif",
   READ_RENOWN = "renom",
