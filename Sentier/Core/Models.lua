@@ -16,11 +16,15 @@ function Models.RepText(rep)
   return ""
 end
 
+local function wqTitle(wq)
+  return wq.title or L.UNKNOWN_QUEST:format(wq.questId or 0)
+end
+
 function Models.Target(entry)
   local task = entry.task
   if task.type == "worldquests" then
     local wq = entry.info.worldQuests and entry.info.worldQuests[1]
-    if wq and wq.map and wq.x and wq.y then return { map = wq.map, x = wq.x, y = wq.y, title = wq.title } end
+    if wq and wq.map and wq.x and wq.y then return { map = wq.map, x = wq.x, y = wq.y, title = wqTitle(wq) } end
     return nil
   end
   if task.map and task.x and task.y then
@@ -59,7 +63,8 @@ function Models.Step(result, viewIndex)
   if entry.info.worldQuests then
     for k = 1, math.min(3, #entry.info.worldQuests) do
       local wq = entry.info.worldQuests[k]
-      detail[#detail + 1] = wq.title .. " " .. Models.RepText(wq.rep)
+      local rep = Models.RepText(wq.rep)
+      detail[#detail + 1] = (rep ~= "") and (wqTitle(wq) .. " " .. rep) or wqTitle(wq)
     end
   end
   m.detail = table.concat(detail, "\n")
@@ -87,8 +92,8 @@ function Models.List(result, hideDone)
           for _, wq in ipairs(entry.info.worldQuests or {}) do
             remaining = remaining + 1
             items[#items + 1] = {
-              kind = "worldquest", status = "todo", text = wq.title, rep = Models.RepText(wq.rep),
-              target = (wq.map and wq.x and wq.y) and { map = wq.map, x = wq.x, y = wq.y, title = wq.title } or nil,
+              kind = "worldquest", status = "todo", text = wqTitle(wq), rep = Models.RepText(wq.rep),
+              target = (wq.map and wq.x and wq.y) and { map = wq.map, x = wq.x, y = wq.y, title = wqTitle(wq) } or nil,
             }
           end
         else

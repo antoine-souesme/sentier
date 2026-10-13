@@ -70,6 +70,45 @@ describe("Models", function()
     assert.are.equal("Raid de la tribu +150 rep", m.detail)
   end)
 
+  it("est vide quand toutes les sources sont coupées", function()
+    g:Weekly("delves", { title = "Gouffres" })
+    g:Quest(1, {})
+    g:WorldQuests({ zones = {} })
+    g:Order({ 1, "delves", "worldquests" })
+    for _, src in ipairs({ "sidequests", "weekly", "daily", "rares", "worldquests" }) do
+      ns.DB.account.sources[src] = false
+    end
+    local m = step(1)
+    assert.is_true(m.empty)
+    assert.are.equal(ns.L.NO_STEP, m.title)
+    assert.are.same({}, ns.Models.List(ns.State:Evaluate(g), false))
+  end)
+
+  it("est vide quand toutes les tâches sont faites", function()
+    g:Quest(1, {})
+    g:Quest(2, {})
+    g:Order({ 1, 2 })
+    ns.Sensors.done[1] = true
+    ns.Sensors.done[2] = true
+    local m = step(1)
+    assert.is_true(m.empty)
+    assert.are.equal(ns.L.NO_STEP, m.title)
+    assert.has_no.errors(function() ns.Models.List(ns.State:Evaluate(g), true) end)
+    assert.has_no.errors(function() ns.Models.List(ns.State:Evaluate(g), false) end)
+  end)
+
+  it("résiste à une quête mondiale sans titre", function()
+    g:WorldQuests({ zones = {} })
+    g:Order({ "worldquests" })
+    ns.Sensors.worldQuests[2696] = { { questId = 77, rep = 0, map = 2437, x = 1, y = 2 } }
+    local m
+    assert.has_no.errors(function() m = step(1) end)
+    assert.are.equal(ns.L.UNKNOWN_QUEST:format(77), m.detail)
+    assert.are.equal(ns.L.UNKNOWN_QUEST:format(77), m.target.title)
+    local rows = ns.Models.List(ns.State:Evaluate(g), false)
+    assert.are.equal(ns.L.UNKNOWN_QUEST:format(77), rows[2].text)
+  end)
+
   describe("liste", function()
     before_each(function()
       g:Weekly("delves", { title = "Gouffres généreux", rep = 1000 })
