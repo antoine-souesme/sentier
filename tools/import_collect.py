@@ -142,12 +142,21 @@ def known_quest_ids(guides_dir):
     return ids
 
 
+def lua_string(text):
+    """Chaîne Lua entre guillemets, sur une seule ligne."""
+    text = " ".join(str(text).replace("\r", "\n").split("\n"))
+    return '"' + text.replace("\\", "\\\\").replace('"', '\\"') + '"'
+
+
 def format_line(quest_id, entry, amount):
     parts = [f"rep = {amount}"]
+    title = entry.get("title")
+    if title:
+        title = " ".join(str(title).replace("\r", "\n").split("\n"))
+        parts.append(f"title = {lua_string(title)}")
     if entry.get("map") is not None and entry.get("x") is not None and entry.get("y") is not None:
         parts.append(f"map = {int(entry['map'])}, x = {entry['x']:.1f}, y = {entry['y']:.1f}")
     line = f"G:Quest({quest_id}, {{ {', '.join(parts)} }})"
-    title = entry.get("title")
     return f"{line} -- {title}" if title else line
 
 

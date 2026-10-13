@@ -41,8 +41,14 @@ def test_parse_saved_variables_reads_wow_format():
 
 def test_format_line_with_and_without_position():
     entry = {"title": "La chasse attend", "map": 2437, "x": 45.2, "y": 60.1}
-    assert format_line(91234, entry, 250) == 'G:Quest(91234, { rep = 250, map = 2437, x = 45.2, y = 60.1 }) -- La chasse attend'
+    assert format_line(91234, entry, 250) == 'G:Quest(91234, { rep = 250, title = "La chasse attend", map = 2437, x = 45.2, y = 60.1 }) -- La chasse attend'
     assert format_line(5, {}, 75) == "G:Quest(5, { rep = 75 })"
+
+
+
+def test_format_line_escapes_title_for_lua():
+    entry = {"title": 'La "chasse"\\ma\nsuite'}
+    assert format_line(7, entry, 10) == 'G:Quest(7, { rep = 10, title = "La \\"chasse\\"\\\\ma suite" }) -- La "chasse"\\ma suite'
 
 
 def test_build_suggestions_skips_known_and_world_quests():
@@ -54,8 +60,8 @@ def test_build_suggestions_skips_known_and_world_quests():
         4: {"title": "D", "rewards": {1: {"factionId": 2704, "amount": 50}, 2: {"factionId": 2696, "amount": 75}}},
     }
     assert build_suggestions(collected, known={3}) == {
-        "Amani.lua": ["G:Quest(1, { rep = 250 }) -- A", "G:Quest(4, { rep = 75 }) -- D"],
-        "Harati.lua": ["G:Quest(4, { rep = 50 }) -- D"],
+        "Amani.lua": ['G:Quest(1, { rep = 250, title = "A" }) -- A', 'G:Quest(4, { rep = 75, title = "D" }) -- D'],
+        "Harati.lua": ['G:Quest(4, { rep = 50, title = "D" }) -- D'],
     }
 
 
