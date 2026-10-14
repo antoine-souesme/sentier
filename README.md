@@ -4,11 +4,15 @@ Addon World of Warcraft (Midnight) qui affiche des guides en jeu. Premier guide 
 
 ## Installation pour jouer
 
-Décompresser `Sentier-<version>.zip` dans `World of Warcraft/_retail_/Interface/AddOns/`. En jeu : `/sentier` ou le bouton des addons près de la minicarte.
+Sentier a besoin de l'addon **Grail** (base de données des quêtes) : l'installer depuis CurseForge (https://www.curseforge.com/wow/addons/grail) ou depuis https://github.com/smaitch/Grail (copier les dossiers `Grail` et `Grail-Reputations` dans `AddOns`).
+
+Décompresser ensuite `Sentier-<version>.zip` dans `World of Warcraft/_retail_/Interface/AddOns/`. En jeu : `/sentier`, l'icône de Sentier sur la minicarte, ou le bouton des addons près de la minicarte.
+
+Si Grail est indiqué « périmé » dans la liste des addons, cocher « Charger les addons périmés ».
 
 ## Développement
 
-Outils : `brew install lua luarocks && luarocks install busted`, puis `python3 -m venv .venv && .venv/bin/pip install pytest`.
+Outils : `brew install lua luarocks && luarocks install busted`.
 
 Relier l'addon au jeu (une seule fois) :
 
@@ -25,18 +29,15 @@ En jeu, `/reload` recharge les changements.
 
 ```bash
 busted                       # tests Lua
-.venv/bin/pytest tests/python
 ```
 
 ## Outils
 
-- `python3 tools/build_catalog.py` : régénère le catalogue des quêtes de Midnight (identifiants Blizzard dans `.env` : `BLIZZARD_CLIENT_ID`, `BLIZZARD_CLIENT_SECRET`). À relancer à chaque patch.
-- `python3 tools/import_collect.py <SavedVariables/Sentier.lua>` : propose des lignes `G:Quest(...)` à partir du mode collecte. Voir `docs/contenu.md`.
 - `tools/package.sh` : crée l'archive à partager.
 
 ## Commandes en jeu
 
-`/sentier` (afficher ou masquer), `/sentier debug` (problèmes détectés et cartes trouvées), `/sentier collect on|off`.
+`/sentier` (afficher ou masquer), `/sentier debug` (problèmes détectés, cartes trouvées et nombre de quêtes venues de Grail).
 
 ## Documentation
 
