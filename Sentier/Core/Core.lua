@@ -1,0 +1,173 @@
+local addonName, ns = ...
+local L = ns.L
+
+local Core = CreateFrame("Frame")
+ns.Core = Core
+
+local REFRESH_EVENTS = {
+  "QUEST_TURNED_IN",
+  "QUEST_LOG_UPDATE",
+  "QUEST_ACCEPTED",
+  "QUEST_REMOVED",
+  "UPDATE_FACTION",
+  "MAJOR_FACTION_RENOWN_LEVEL_CHANGED",
+  "MAJOR_FACTION_UNLOCKED",
+  "QUEST_DATA_LOAD_RESULT",
+  "ZONE_CHANGED_NEW_AREA",
+}
+
+function Core:CurrentGuide()
+  local guide = ns.Registry:Resolve(ns.DB.char.guide)
+  if guide then ns.DB.char.guide = guide.id end
+  return guide
+end
+
+function Core:SetGuide(id)
+  ns.DB.char.guide = id
+  ns.DB:SetStep(nil)
+  ns.Navigation:Clear()
+  self:Refresh()
+end
+
+function Core:Refresh()
+  local guide = self:CurrentGuide()
+  if not guide then return end
+  ns.GrailGuides:RefreshTitles(guide)
+  local result = ns.State:Evaluate(guide)
+  self.result = result
+
+  -- Quand l'étape en cours change, on revient dessus. La clé est gardée par personnage.
+  -- Le repère est replacé quand l'étape change, quand rien n'est ciblé dans cette session
+  -- (après connexion ou /reload, TomTom ne garde pas le sien) ou quand la cible de l'étape
+  -- a bougé : la tâche des quêtes mondiales garde la même clé quand sa première quête est
+  -- finie. On compare à la dernière cible posée ici, pas au repère en cours, pour ne pas
+  -- écraser un repère choisi à la main dans la fenêtre.
+  local current = result.steps[1]
+  local key = current and (guide.id .. ":" .. current.task.key)
+  local changed = key ~= ns.DB:GetStep()
+  if changed then
+    ns.DB:SetStep(key)
+    ns.UI.viewIndex = 1
+  end
+  local target = current and ns.Models.Target(current)
+  local last = self.autoTarget
+  if target then
+    local moved = not last or last.map ~= target.map or last.x ~= target.x or last.y ~= target.y
+    if changed or moved or not ns.Navigation.target then
+      ns.Navigation:SetTarget(target.map, target.x, target.y, target.title)
+      self.autoTarget = target
+    end
+  elseif changed or last then
+    ns.Navigation:Clear()
+    self.autoTarget = nil
+  end
+
+  ns.UI:Render(result)
+end
+
+-- Regroupe les événements rapprochés en un seul recalcul.
+function Core:RequestRefresh()
+  if self.pending then return end
+  self.pending = true
+  C_Timer.After(0.5, function()
+    self.pending = false
+    self:Refresh()
+  end)
+end
+
+function Core:ScheduleReset()
+  local seconds = ns.Sensors.GetSecondsUntilDailyReset()
+  if not seconds then return end
+  if self.resetTimer then self.resetTimer:Cancel() end
+  self.resetTimer = C_Timer.NewTimer(seconds + 5, function()
+    self:RequestRefresh()
+    self:ScheduleReset()
+  end)
+end
+
+-- Grail finit de charger ses données pendant la connexion : on vérifie chaque seconde, 30 fois au plus.
+function Core:WaitForGrail()
+  if not ns.GrailSource.Available() then
+    ns.Registry:Problem(L.PROBLEM_NO_GRAIL)
+    return
+  end
+  local tries = 0
+  local ticker
+  ticker = C_Timer.NewTicker(1, function()
+    tries = tries + 1
+    if ns.GrailSource.Ready() then
+      ticker:Cancel()
+      ns.GrailGuides:Fill()
+      self:RequestRefresh()
+    elseif tries >= 30 then
+      ticker:Cancel()
+      ns.Registry:Problem(L.PROBLEM_GRAIL_NOT_READY)
+    end
+  end)
+end
+
+Core:SetScript("OnEvent", function(self, event, ...)
+  if event == "ADDON_LOADED" then
+    if ... == addonName then
+      ns.DB:Init()
+      self:UnregisterEvent("ADDON_LOADED")
+    end
+  elseif event == "PLAYER_LOGIN" then
+    ns.UI:Create()
+    if ns.DB.char.hidden then ns.UI.frame:Hide() end
+    ns.MinimapButton:Create()
+    for _, e in ipairs(REFRESH_EVENTS) do
+      if not pcall(self.RegisterEvent, self, e) then ns.Registry:Problem(L.PROBLEM_EVENT:format(e)) end
+    end
+    self:Refresh()
+    self:ScheduleReset()
+    self:WaitForGrail()
+  else
+    self:RequestRefresh()
+  end
+end)
+Core:RegisterEvent("ADDON_LOADED")
+Core:RegisterEvent("PLAYER_LOGIN")
+
+-- Zones lues par les tâches de quêtes mondiales de tous les guides enregistrés.
+local function worldQuestZones()
+  local names, seen = {}, {}
+  for _, guide in ipairs(ns.Registry:List()) do
+    for _, task in ipairs(guide.tasks) do
+      if task.type == "worldquests" then
+        for _, zone in ipairs(task.zones or {}) do
+          if not seen[zone] then
+            seen[zone] = true
+            names[#names + 1] = zone
+          end
+        end
+      end
+    end
+  end
+  return names
+end
+
+local function printDebug()
+  if #ns.Registry.problems == 0 then
+    print(L.DEBUG_NONE)
+  else
+    print(L.DEBUG_HEADER)
+    for _, p in ipairs(ns.Registry.problems) do print(L.DEBUG_PROBLEM:format(p)) end
+  end
+  local maps = ns.Sensors.FindZoneMaps(worldQuestZones())
+  local text = (maps and #maps > 0) and table.concat(maps, L.SEP_LIST) or L.DEBUG_NO_MAPS
+  print(L.DEBUG_MAPS:format(text))
+  print(L.DEBUG_GRAIL:format(ns.GrailGuides.added))
+end
+
+SLASH_SENTIER1 = "/sentier"
+SlashCmdList.SENTIER = function(msg)
+  local cmd, arg = (msg or ""):lower():match("^(%S*)%s*(.-)$")
+  if cmd == "" then
+    ns.UI:Toggle()
+  elseif cmd == "debug" then
+    printDebug()
+  else
+    print(L.HELP)
+  end
+end
