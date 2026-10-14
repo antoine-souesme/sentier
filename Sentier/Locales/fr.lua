@@ -1,6 +1,10 @@
 local _, ns = ...
 
 ns.L = {
+  ADDON_NAME = "Sentier",
+  MINIMAP_LEFT = "Clic gauche : ouvrir ou fermer le guide",
+  MINIMAP_RIGHT = "Clic droit : réglages",
+  MINIMAP_DRAG = "Glisser : déplacer l'icône",
   TAB_STEP = "Étape",
   TAB_LIST = "Liste",
   MENU_GUIDES = "Changer de guide",
@@ -45,6 +49,7 @@ ns.L = {
   SETTINGS_HIDE_DONE = "Masquer les tâches terminées",
   SHOW_DONE = "Afficher les quêtes faites",
   SETTINGS_LOCK = "Verrouiller la fenêtre",
+  SETTINGS_MINIMAP = "Afficher l'icône sur la minicarte",
   SETTINGS_CLEAR_SKIPS = "Remettre les étapes passées",
 
   MANUAL_HINT = "Clic droit : cocher ou décocher à la main",

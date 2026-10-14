@@ -115,6 +115,7 @@ Core:SetScript("OnEvent", function(self, event, ...)
   elseif event == "PLAYER_LOGIN" then
     ns.UI:Create()
     if ns.DB.char.hidden then ns.UI.frame:Hide() end
+    ns.MinimapButton:Create()
     for _, e in ipairs(REFRESH_EVENTS) do
       if not pcall(self.RegisterEvent, self, e) then ns.Registry:Problem(L.PROBLEM_EVENT:format(e)) end
     end

@@ -24,7 +24,7 @@ end
 
 function Settings:Create(anchor)
   local f = CreateFrame("Frame", "SentierSettings", anchor, "BackdropTemplate")
-  f:SetSize(240, 300)
+  f:SetSize(240, 324)
   f:SetPoint("TOPLEFT", anchor, "TOPRIGHT", 4, 0)
   f:SetBackdrop(ns.UI.BACKDROP)
   f:SetBackdropColor(0.08, 0.09, 0.11, 0.95)
@@ -49,6 +49,11 @@ function Settings:Create(anchor)
   checkbox(f, L.SETTINGS_HIDE_DONE, y, function() return ns.DB.account.hideDone end, function(v) ns.DB.account.hideDone = v end)
   y = y - 22
   checkbox(f, L.SETTINGS_LOCK, y, function() return ns.DB.account.locked end, function(v) ns.DB.account.locked = v end)
+  y = y - 22
+  checkbox(f, L.SETTINGS_MINIMAP, y, function() return not ns.DB.account.minimap.hidden end, function(v)
+    ns.DB.account.minimap.hidden = not v
+    ns.MinimapButton:Refresh()
+  end)
   y = y - 30
 
   local nav = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")

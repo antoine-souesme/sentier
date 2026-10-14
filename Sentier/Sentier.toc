@@ -29,5 +29,6 @@ Guides\Reputation\Midnight\ZuljarraForces.lua
 UI\StepTab.lua
 UI\ListTab.lua
 UI\Settings.lua
+UI\MinimapButton.lua
 UI\MainFrame.lua
 Core\Core.lua
