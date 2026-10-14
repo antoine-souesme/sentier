@@ -33,34 +33,62 @@ function UI:Create()
   f:SetScript("OnDragStart", function(self) if not ns.DB.account.locked then self:StartMoving() end end)
   f:SetScript("OnDragStop", function(self) self:StopMovingOrSizing(); savePosition(self) end)
 
-  local title = CreateFrame("Button", nil, f)
-  title:SetPoint("TOPLEFT", 10, -8)
-  title:SetPoint("TOPRIGHT", -34, -8)
-  title:SetHeight(18)
-  title.text = title:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-  title.text:SetAllPoints()
-  title.text:SetJustifyH("LEFT")
-  title:SetScript("OnClick", function(btn) UI:OpenGuideMenu(btn) end)
+  -- Barre de titre : toute sa largeur sert de poignée pour déplacer la fenêtre.
+  local bar = CreateFrame("Frame", nil, f)
+  bar:SetPoint("TOPLEFT", 4, -4)
+  bar:SetPoint("TOPRIGHT", -4, -4)
+  bar:SetHeight(24)
+  bar:EnableMouse(true)
+  bar:RegisterForDrag("LeftButton")
+  bar:SetScript("OnDragStart", function() if not ns.DB.account.locked then f:StartMoving() end end)
+  bar:SetScript("OnDragStop", function() f:StopMovingOrSizing(); savePosition(f) end)
+  bar.hover = bar:CreateTexture(nil, "BACKGROUND")
+  bar.hover:SetAllPoints()
+  bar.hover:SetColorTexture(1, 1, 1, 0.06)
+  bar.hover:Hide()
+  bar:SetScript("OnEnter", function() bar.hover:Show() end)
+  bar:SetScript("OnLeave", function() bar.hover:Hide() end)
+
+  local title = bar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  title:SetPoint("LEFT", 6, 0)
+  title:SetPoint("RIGHT", -52, 0)
+  title:SetJustifyH("LEFT")
+  title:SetWordWrap(false)
   self.title = title
 
-  local gear = CreateFrame("Button", nil, f)
+  local gear = CreateFrame("Button", nil, bar)
   gear:SetSize(20, 20)
-  gear:SetPoint("TOPRIGHT", -8, -6)
+  gear:SetPoint("RIGHT", -2, 0)
   gear:SetNormalTexture("Interface\\Buttons\\UI-OptionsButton")
+  gear:SetHighlightTexture("Interface\\Buttons\\UI-Common-MouseHilight", "ADD")
   gear:SetScript("OnClick", function() ns.Settings:Toggle(f) end)
+
+  local menu = CreateFrame("Button", nil, bar)
+  menu:SetSize(22, 22)
+  menu:SetPoint("RIGHT", gear, "LEFT", -4, 0)
+  menu:SetNormalTexture("Interface\\Buttons\\UI-ScrollBar-ScrollDownButton-Up")
+  menu:SetPushedTexture("Interface\\Buttons\\UI-ScrollBar-ScrollDownButton-Down")
+  menu:SetHighlightTexture("Interface\\Buttons\\UI-ScrollBar-ScrollDownButton-Highlight", "ADD")
+  menu:SetScript("OnClick", function(btn) UI:OpenGuideMenu(btn) end)
+  menu:SetScript("OnEnter", function(btn)
+    GameTooltip:SetOwner(btn, "ANCHOR_RIGHT")
+    GameTooltip:AddLine(L.MENU_GUIDES)
+    GameTooltip:Show()
+  end)
+  menu:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
   self.tabs = {}
   for i, key in ipairs({ "step", "list" }) do
     local b = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
     b:SetSize(70, 20)
     b:SetText(key == "step" and L.TAB_STEP or L.TAB_LIST)
-    b:SetPoint("TOPLEFT", 10 + (i - 1) * 74, -30)
+    b:SetPoint("TOPLEFT", 10 + (i - 1) * 74, -32)
     b:SetScript("OnClick", function() UI:SetTab(key) end)
     self.tabs[key] = b
   end
 
   local body = CreateFrame("Frame", nil, f)
-  body:SetPoint("TOPLEFT", 8, -54)
+  body:SetPoint("TOPLEFT", 8, -56)
   body:SetPoint("BOTTOMRIGHT", -8, 8)
   self.panels = { step = ns.StepTab:Create(body), list = ns.ListTab:Create(body) }
 
@@ -92,7 +120,7 @@ end
 
 function UI:Render(result)
   if not self.frame or not result then return end
-  self.title.text:SetText(result.guide.title)
+  self.title:SetText(result.guide.title)
   if ns.DB.char.tab == "list" then
     self.panels.list:Render(result)
   else

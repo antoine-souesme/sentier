@@ -3,6 +3,7 @@ local _, ns = ...
 ns.L = {
   TAB_STEP = "Étape",
   TAB_LIST = "Liste",
+  MENU_GUIDES = "Changer de guide",
 
   GROUP_WEEKLY = "Cette semaine",
   GROUP_DAILY = "Aujourd'hui",
