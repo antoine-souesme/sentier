@@ -122,4 +122,10 @@ describe("Sensors", function()
       assert.are.equal(777, S.Now())
     end)
   end)
+
+  it("donne le nom d'une carte", function()
+    _G.C_Map = { GetMapInfo = function(id) if id == 2413 then return { name = "Harandar" } end end }
+    assert.are.equal("Harandar", S.GetMapName(2413))
+    assert.is_nil(S.GetMapName(1))
+  end)
 end)

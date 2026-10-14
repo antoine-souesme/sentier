@@ -117,6 +117,13 @@ function S.FindZoneMaps(names)
   return found
 end
 
+function S.GetMapName(mapId)
+  return safe("READ_MAPS", function()
+    local info = C_Map.GetMapInfo(mapId)
+    return info and info.name
+  end)
+end
+
 function S.GetWeeklyResetStart()
   return safe("READ_WEEKLY_RESET", function() return C_DateAndTime.GetWeeklyResetStartTime() end)
 end

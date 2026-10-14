@@ -17,6 +17,7 @@ Sensors\Sensors.lua
 Sensors\Grail.lua
 Core\State.lua
 Core\Models.lua
+Core\GrailGuides.lua
 Navigation\Navigation.lua
 Guides\Reputation\Midnight\Zones.lua
 Guides\Reputation\Midnight\Amani.lua

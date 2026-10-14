@@ -27,6 +27,8 @@ function Registry:NewGuide(id, opts)
     title = opts.title or id,
     category = opts.category or L.DEFAULT_CATEGORY,
     faction = opts.faction,
+    fromGrail = opts.fromGrail == true,
+    zones = opts.zones or {},
     tasks = {},
     byId = {},
     order = {},

@@ -8,6 +8,7 @@ H.FILES = {
   "Sentier/Core/DB.lua",
   "Sentier/Core/State.lua",
   "Sentier/Core/Models.lua",
+  "Sentier/Core/GrailGuides.lua",
   "Sentier/Navigation/Navigation.lua",
 }
 
@@ -28,6 +29,7 @@ function H.fakeSensors()
     worldQuests = {},
     objectives = {},
     zoneMaps = { 2437 },
+    mapNames = {},
   }
   f.Now = function() return f.now end
   f.IsQuestDone = function(id)
@@ -41,6 +43,23 @@ function H.fakeSensors()
   f.GetWeeklyResetStart = function() return f.weeklyStart end
   f.GetSecondsUntilDailyReset = function() return f.dailyUntil end
   f.GetObjectiveProgress = function(questId) return f.objectives[questId] end
+  f.GetMapName = function(id) return f.mapNames[id] end
+  return f
+end
+
+-- Grail simulé au niveau de GrailSource : les tests remplissent byFaction, infos et titles.
+function H.fakeGrailSource()
+  local f = { ready = true, available = true, byFaction = {}, infos = {}, titles = {}, broken = false }
+  f.Available = function() return f.available end
+  f.Ready = function() return f.ready end
+  f.QuestsByFaction = function(ids)
+    if f.broken then return nil end
+    local out = {}
+    for _, id in ipairs(ids) do out[id] = f.byFaction[id] or {} end
+    return out
+  end
+  f.QuestInfo = function(id) return f.infos[id] end
+  f.QuestTitle = function(id) return f.titles[id] end
   return f
 end
 
@@ -54,6 +73,7 @@ function H.load(saved)
     if exists(path) then assert(loadfile(path))("Sentier", ns) end
   end
   ns.Sensors = H.fakeSensors()
+  ns.GrailSource = H.fakeGrailSource()
   if ns.DB then ns.DB:Init() end
   return ns
 end
