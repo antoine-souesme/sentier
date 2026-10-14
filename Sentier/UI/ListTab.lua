@@ -24,6 +24,7 @@ function ListTab:Create(parent)
   showDone.label:SetPoint("LEFT", showDone, "RIGHT", 2, 0)
   showDone.label:SetText(L.SHOW_DONE)
   showDone:SetScript("OnClick", function(self)
+    ns.UI:Click()
     ns.DB.account.hideDone = not self:GetChecked()
     ns.Core:Refresh()
   end)
@@ -39,14 +40,16 @@ function ListTab:Create(parent)
 
   local function onClick(row, button)
     local data = row.data
-    if not data then return end
+    if not data or data.kind == "header" then return end
     if button == "RightButton" and data.kind == "task" then
       local guide = ns.Core.result.guide
       local task = data.entry.task
-      ns.DB:SetMarked(guide, task, not ns.DB:IsMarked(guide, task))
+      local marked = not ns.DB:IsMarked(guide, task)
+      ns.DB:SetMarked(guide, task, marked)
+      ns.UI:Notify(marked and L.FEEDBACK_MARKED or L.FEEDBACK_UNMARKED)
       ns.Core:Refresh()
-    elseif data.target then
-      ns.Navigation:SetTarget(data.target.map, data.target.x, data.target.y, data.target.title)
+    else
+      ns.UI:GoTo(data.target)
     end
   end
 
@@ -75,6 +78,12 @@ function ListTab:Create(parent)
     row.rep:SetPoint("RIGHT", -2, 0)
     row.rep:SetTextColor(0.62, 0.77, 1)
     row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+    row.pressed = row:CreateTexture(nil, "BACKGROUND")
+    row.pressed:SetAllPoints()
+    row.pressed:SetColorTexture(1, 1, 1, 0.12)
+    row.pressed:Hide()
+    row:SetScript("OnMouseDown", function(self) self.pressed:Show() end)
+    row:SetScript("OnMouseUp", function(self) self.pressed:Hide() end)
     row:SetScript("OnClick", onClick)
     row:SetScript("OnEnter", onEnter)
     row:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -89,6 +98,8 @@ function ListTab:Create(parent)
     for i, data in ipairs(rows) do
       local row = getRow(i)
       row.data = data
+      -- Les titres de groupe ne sont pas cliquables : pas de surbrillance ni d'enfoncement.
+      row:EnableMouse(data.kind ~= "header")
       row:ClearAllPoints()
       row:SetPoint("TOPLEFT", 0, -(i - 1) * ROW_HEIGHT)
       row:SetWidth(width)

@@ -15,6 +15,7 @@ local function checkbox(parent, label, y, get, set)
   cb.label:SetText(label)
   cb:SetScript("OnShow", function(self) self:SetChecked(get()) end)
   cb:SetScript("OnClick", function(self)
+    ns.UI:Click()
     set(self:GetChecked() and true or false)
     ns.Core:Refresh()
   end)
@@ -56,6 +57,7 @@ function Settings:Create(anchor)
   local function navLabel() nav:SetText(L.SETTINGS_NAV .. L.SEP_LABEL .. (L["NAV_" .. tostring(ns.DB.account.nav)] or L.NAV_auto)) end
   nav:SetScript("OnShow", navLabel)
   nav:SetScript("OnClick", function()
+    ns.UI:Click()
     local index = 1
     for i, mode in ipairs(NAV_MODES) do
       if mode == ns.DB.account.nav then index = i end
@@ -76,6 +78,7 @@ function Settings:Create(anchor)
     local guide = ns.Core.result and ns.Core.result.guide
     if guide then
       ns.DB:ClearSkips(guide)
+      ns.UI:Notify(L.FEEDBACK_SKIPS_CLEARED)
       ns.Core:Refresh()
     end
   end)

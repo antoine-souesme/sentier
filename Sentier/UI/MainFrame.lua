@@ -61,7 +61,7 @@ function UI:Create()
   gear:SetPoint("RIGHT", -2, 0)
   gear:SetNormalTexture("Interface\\Buttons\\UI-OptionsButton")
   gear:SetHighlightTexture("Interface\\Buttons\\UI-Common-MouseHilight", "ADD")
-  gear:SetScript("OnClick", function() ns.Settings:Toggle(f) end)
+  gear:SetScript("OnClick", function() UI:Click(); ns.Settings:Toggle(f) end)
 
   local menu = CreateFrame("Button", nil, bar)
   menu:SetSize(22, 22)
@@ -69,7 +69,7 @@ function UI:Create()
   menu:SetNormalTexture("Interface\\Buttons\\UI-ScrollBar-ScrollDownButton-Up")
   menu:SetPushedTexture("Interface\\Buttons\\UI-ScrollBar-ScrollDownButton-Down")
   menu:SetHighlightTexture("Interface\\Buttons\\UI-ScrollBar-ScrollDownButton-Highlight", "ADD")
-  menu:SetScript("OnClick", function(btn) UI:OpenGuideMenu(btn) end)
+  menu:SetScript("OnClick", function(btn) UI:Click(); UI:OpenGuideMenu(btn) end)
   menu:SetScript("OnEnter", function(btn)
     GameTooltip:SetOwner(btn, "ANCHOR_RIGHT")
     GameTooltip:AddLine(L.MENU_GUIDES)
@@ -83,14 +83,21 @@ function UI:Create()
     b:SetSize(70, 20)
     b:SetText(key == "step" and L.TAB_STEP or L.TAB_LIST)
     b:SetPoint("TOPLEFT", 10 + (i - 1) * 74, -32)
-    b:SetScript("OnClick", function() UI:SetTab(key) end)
+    b:SetScript("OnClick", function() UI:Click(); UI:SetTab(key) end)
     self.tabs[key] = b
   end
 
   local body = CreateFrame("Frame", nil, f)
   body:SetPoint("TOPLEFT", 8, -56)
-  body:SetPoint("BOTTOMRIGHT", -8, 8)
+  body:SetPoint("BOTTOMRIGHT", -8, 24)
   self.panels = { step = ns.StepTab:Create(body), list = ns.ListTab:Create(body) }
+
+  local message = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  message:SetPoint("BOTTOMLEFT", 10, 8)
+  message:SetPoint("BOTTOMRIGHT", -20, 8)
+  message:SetJustifyH("LEFT")
+  message:SetTextColor(0.94, 0.78, 0.37)
+  self.message = message
 
   local grip = CreateFrame("Button", nil, f)
   grip:SetSize(14, 14)
@@ -147,6 +154,31 @@ function UI:Toggle()
   local f = self:Create()
   f:SetShown(not f:IsShown())
   ns.DB.char.hidden = not f:IsShown()
+end
+
+-- Son de clic du jeu. Protégé : les noms de sons changent parfois d'une version à l'autre.
+function UI:Click()
+  if SOUNDKIT and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON then
+    pcall(PlaySound, SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+  end
+end
+
+-- Confirme une action : son de clic, puis message en bas de la fenêtre pendant 3 secondes.
+function UI:Notify(text)
+  self:Click()
+  if not self.message then return end
+  self.message:SetText(text)
+  if self.messageTimer then self.messageTimer:Cancel() end
+  self.messageTimer = C_Timer.NewTimer(3, function() self.message:SetText("") end)
+end
+
+function UI:GoTo(target)
+  if target then
+    ns.Navigation:SetTarget(target.map, target.x, target.y, target.title)
+    self:Notify(L.FEEDBACK_WAYPOINT:format(target.title))
+  else
+    self:Notify(L.FEEDBACK_NO_POSITION)
+  end
 end
 
 function Sentier_OnAddonCompartmentClick()

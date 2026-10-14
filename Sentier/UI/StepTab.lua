@@ -54,9 +54,13 @@ function StepTab:Create(parent)
   step.rep = step:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
   step.rep:SetPoint("BOTTOMRIGHT", -6, 6)
   step.rep:SetTextColor(0.62, 0.77, 1)
+  local highlight = step:CreateTexture(nil, "HIGHLIGHT")
+  highlight:SetAllPoints()
+  highlight:SetColorTexture(1, 1, 1, 0.08)
+  step:SetScript("OnMouseDown", function() step.bg:SetColorTexture(0.07, 0.065, 0.05) end)
+  step:SetScript("OnMouseUp", function() step.bg:SetColorTexture(0.12, 0.11, 0.08) end)
   step:SetScript("OnClick", function()
-    local target = p.model and p.model.target
-    if target then ns.Navigation:SetTarget(target.map, target.x, target.y, target.title) end
+    if p.model and p.model.entry then ns.UI:GoTo(p.model.target) end
   end)
   p.step = step
 
@@ -75,16 +79,19 @@ function StepTab:Create(parent)
   end
 
   p.prev = button(L.BTN_PREV, 28, 2, function()
+    ns.UI:Click()
     ns.UI.viewIndex = math.max(1, ns.UI.viewIndex - 1)
     ns.UI:Render(ns.Core.result)
   end)
   p.skip = button(L.BTN_SKIP, 70, 34, function()
     if p.model and p.model.entry then
       ns.DB:SetSkipped(ns.Core.result.guide, p.model.entry.task, true)
+      ns.UI:Notify(L.FEEDBACK_SKIPPED)
       ns.Core:Refresh()
     end
   end)
   p.next = button(L.BTN_NEXT, 28, 108, function()
+    ns.UI:Click()
     ns.UI.viewIndex = ns.UI.viewIndex + 1
     ns.UI:Render(ns.Core.result)
   end)

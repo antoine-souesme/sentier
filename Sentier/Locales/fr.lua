@@ -48,6 +48,12 @@ ns.L = {
   SETTINGS_CLEAR_SKIPS = "Remettre les étapes passées",
 
   MANUAL_HINT = "Clic droit : cocher ou décocher à la main",
+  FEEDBACK_WAYPOINT = "Repère posé : %s",
+  FEEDBACK_NO_POSITION = "Pas de position pour cette tâche",
+  FEEDBACK_MARKED = "Tâche cochée",
+  FEEDBACK_UNMARKED = "Tâche décochée",
+  FEEDBACK_SKIPPED = "Étape passée",
+  FEEDBACK_SKIPS_CLEARED = "Étapes passées remises",
 
   STEP_KIND_FMT = "%s  |cff8a8270(%s)|r",
   ICON_UNKNOWN = "? ",
