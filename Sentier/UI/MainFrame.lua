@@ -5,9 +5,25 @@ local L = ns.L
 local UI = ns.UI or { viewIndex = 1 }
 ns.UI = UI
 
+-- La fenêtre est toujours accrochée par son coin haut gauche : sinon, l'agrandir par le coin
+-- bas droit la fait grandir aussi vers le haut, loin du curseur.
+local function anchorTopLeft(f)
+  local left, top = f:GetLeft(), f:GetTop()
+  if not left or not top then return end
+  f:ClearAllPoints()
+  f:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", left, top)
+end
+
 local function savePosition(f)
+  anchorTopLeft(f)
   local point, _, relPoint, x, y = f:GetPoint(1)
   ns.DB.account.frame = { point = point, relPoint = relPoint, x = x, y = y, w = f:GetWidth(), h = f:GetHeight() }
+end
+
+local function startMoving(f)
+  if ns.DB.account.locked then return end
+  anchorTopLeft(f)
+  f:StartMoving()
 end
 
 function UI:Create()
@@ -25,12 +41,14 @@ function UI:Create()
   f:SetBackdropColor(0.08, 0.09, 0.11, 0.92)
   f:SetBackdropBorderColor(0.42, 0.35, 0.18)
   f:SetMovable(true)
+  -- Sentier garde lui-même la position : le jeu ne doit pas la remplacer par la sienne.
+  if f.SetDontSavePosition then f:SetDontSavePosition(true) end
   f:SetResizable(true)
   f:SetClampedToScreen(true)
   f:SetResizeBounds(260, 180, 600, 700)
   f:EnableMouse(true)
   f:RegisterForDrag("LeftButton")
-  f:SetScript("OnDragStart", function(self) if not ns.DB.account.locked then self:StartMoving() end end)
+  f:SetScript("OnDragStart", startMoving)
   f:SetScript("OnDragStop", function(self) self:StopMovingOrSizing(); savePosition(self) end)
 
   -- Barre de titre : toute sa largeur sert de poignée pour déplacer la fenêtre.
@@ -40,7 +58,7 @@ function UI:Create()
   bar:SetHeight(24)
   bar:EnableMouse(true)
   bar:RegisterForDrag("LeftButton")
-  bar:SetScript("OnDragStart", function() if not ns.DB.account.locked then f:StartMoving() end end)
+  bar:SetScript("OnDragStart", function() startMoving(f) end)
   bar:SetScript("OnDragStop", function() f:StopMovingOrSizing(); savePosition(f) end)
   bar.hover = bar:CreateTexture(nil, "BACKGROUND")
   bar.hover:SetAllPoints()
@@ -104,7 +122,11 @@ function UI:Create()
   grip:SetPoint("BOTTOMRIGHT", -3, 3)
   grip:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
   grip:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
-  grip:SetScript("OnMouseDown", function() if not ns.DB.account.locked then f:StartSizing("BOTTOMRIGHT") end end)
+  grip:SetScript("OnMouseDown", function()
+    if ns.DB.account.locked then return end
+    anchorTopLeft(f)
+    f:StartSizing("BOTTOMRIGHT")
+  end)
   grip:SetScript("OnMouseUp", function()
     f:StopMovingOrSizing()
     savePosition(f)
