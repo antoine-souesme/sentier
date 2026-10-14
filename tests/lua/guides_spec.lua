@@ -1,7 +1,7 @@
 local H = dofile("tests/lua/helper.lua")
 
 local DIR = "Sentier/Guides/Reputation/Midnight/"
-local FILES = { "Catalog.lua", "Zones.lua", "Amani.lua", "SilvermoonCourt.lua", "Harati.lua", "Singularity.lua", "ZuljarraForces.lua" }
+local FILES = { "Zones.lua", "Amani.lua", "SilvermoonCourt.lua", "Harati.lua", "Singularity.lua", "ZuljarraForces.lua" }
 
 describe("Guides de Midnight", function()
   local ns
@@ -31,11 +31,4 @@ describe("Guides de Midnight", function()
     for _, g in ipairs(ns.Registry:List()) do assert.is_true(#g.order > 0, g.id) end
   end)
 
-  it("ont un catalogue qui couvre les six zones", function()
-    local zones = {}
-    for _, q in pairs(ns.MidnightCatalog) do zones[q.zone] = true end
-    for _, zone in ipairs({ "Harandar", "Zul’Aman", "Bois des Chants éternels", "Lune-d’Argent", "La flèche du Vide", "Tempête du Vide" }) do
-      assert.is_true(zones[zone] == true, zone)
-    end
-  end)
 end)

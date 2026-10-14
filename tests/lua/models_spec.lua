@@ -7,7 +7,6 @@ describe("Models", function()
     ns = H.load()
     g = Sentier:NewGuide("rep-a", {
       title = "Tribu des Amani", category = "Réputation", faction = 2696,
-      catalog = { [1] = { title = "Quête A" }, [2] = { title = "Quête B" }, [3] = { title = "Quête C" } },
     })
     ns.Sensors.renown[2696] = { level = 12, earned = 1550, threshold = 2500 }
   end)
@@ -33,8 +32,8 @@ describe("Models", function()
   end)
 
   it("décrit l'étape en cours et annonce la suivante", function()
-    g:Quest(1, { rep = 250, map = 2437, x = 45.2, y = 60.1, note = "Parle à Zerella" })
-    g:Quest(2, {})
+    g:Quest(1, { title = "Quête A", rep = 250, map = 2437, x = 45.2, y = 60.1, note = "Parle à Zerella" })
+    g:Quest(2, { title = "Quête B" })
     g:Order({ 1, 2 })
     local m = step(1)
     assert.are.equal("Quête A", m.title)
@@ -112,9 +111,9 @@ describe("Models", function()
   describe("liste", function()
     before_each(function()
       g:Weekly("delves", { title = "Gouffres généreux", rep = 1000 })
-      g:Quest(1, { rep = 250 })
-      g:Quest(2, { rep = 100 })
-      g:Quest(3, { rep = 50, requires = { { renown = 14 } } })
+      g:Quest(1, { title = "Quête A", rep = 250 })
+      g:Quest(2, { title = "Quête B", rep = 100 })
+      g:Quest(3, { title = "Quête C", rep = 50, requires = { { renown = 14 } } })
       g:WorldQuests({ zones = {} })
       ns.Sensors.done[1] = true
       ns.Sensors.worldQuests[2696] = { { questId = 50, title = "Raid de la tribu", rep = 150, map = 2437, x = 10, y = 20 } }

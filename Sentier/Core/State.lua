@@ -33,8 +33,6 @@ end
 function State:TaskStatus(guide, task)
   local info = {}
 
-  if task.missing then return "unknown", info end
-
   if task.type == "worldquests" then
     local maps = ns.Sensors.FindZoneMaps(task.zones or {})
     if maps and #maps == 0 then

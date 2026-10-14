@@ -8,8 +8,6 @@ H.FILES = {
   "Sentier/Core/DB.lua",
   "Sentier/Core/State.lua",
   "Sentier/Core/Models.lua",
-  "Sentier/Core/Collect.lua",
-  "Sentier/Core/Scan.lua",
   "Sentier/Navigation/Navigation.lua",
 }
 
@@ -30,7 +28,6 @@ function H.fakeSensors()
     worldQuests = {},
     objectives = {},
     zoneMaps = { 2437 },
-    position = nil,
   }
   f.Now = function() return f.now end
   f.IsQuestDone = function(id)
@@ -44,7 +41,6 @@ function H.fakeSensors()
   f.GetWeeklyResetStart = function() return f.weeklyStart end
   f.GetSecondsUntilDailyReset = function() return f.dailyUntil end
   f.GetObjectiveProgress = function(questId) return f.objectives[questId] end
-  f.GetPlayerPosition = function() return f.position end
   return f
 end
 

@@ -117,50 +117,10 @@ function S.FindZoneMaps(names)
   return found
 end
 
-function S.GetQuestRepRewards(questId)
-  return safe("READ_REPUTATION", function() return normalize(C_QuestLog.GetQuestLogMajorFactionReputationRewards(questId)) end)
-end
-
--- Demande au jeu de charger une quête et ses récompenses ; la réponse arrive par QUEST_DATA_LOAD_RESULT.
-function S.RequestQuestData(questId)
-  return safe("READ_QUEST", function()
-    C_QuestLog.RequestLoadQuestByID(questId)
-    if C_TaskQuest and C_TaskQuest.RequestPreloadRewardData then C_TaskQuest.RequestPreloadRewardData(questId) end
-    return true
-  end)
-end
-
-function S.GetOfferedQuestRepRewards()
-  return safe("READ_OFFERED_REPUTATION", function() return normalize(C_QuestOffer.GetQuestOfferMajorFactionReputationRewards()) end)
-end
-
-function S.GetQuestTitle(questId)
-  return safe("READ_TITLE", function() return C_QuestLog.GetTitleForQuestID(questId) end)
-end
-
-function S.GetPlayerPosition()
-  return safe("READ_POSITION", function()
-    local map = C_Map.GetBestMapForUnit("player")
-    if not map then return nil end
-    local pos = C_Map.GetPlayerMapPosition(map, "player")
-    if not pos then return nil end
-    local x, y = pos:GetXY()
-    return { map = map, x = math.floor(x * 1000 + 0.5) / 10, y = math.floor(y * 1000 + 0.5) / 10 }
-  end)
-end
-
 function S.GetWeeklyResetStart()
   return safe("READ_WEEKLY_RESET", function() return C_DateAndTime.GetWeeklyResetStartTime() end)
 end
 
 function S.GetSecondsUntilDailyReset()
   return safe("READ_DAILY_RESET", function() return C_DateAndTime.GetSecondsUntilDailyReset() end)
-end
-
-function S.GetOfferedQuest()
-  return safe("READ_OFFERED_QUEST", function()
-    local id = GetQuestID()
-    if not id or id == 0 then return nil end
-    return id, GetTitleText()
-  end)
 end

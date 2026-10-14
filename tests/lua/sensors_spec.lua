@@ -93,10 +93,6 @@ describe("Sensors", function()
     assert.are.same({ 2413, 2437 }, S.FindZoneMaps({ "Zul’Aman", "Harandar" }))
   end)
 
-  it("convertit les récompenses de réputation", function()
-    _G.C_QuestLog = { GetQuestLogMajorFactionReputationRewards = function() return { { factionID = 2696, rewardAmount = 250 } } end }
-    assert.are.same({ { factionId = 2696, amount = 250 } }, S.GetQuestRepRewards(5))
-  end)
   it("ne redemande pas les récompenses d'une quête déjà demandée pendant la session", function()
     fakeWorldQuests({ [2437] = { { questID = 12 } } })
     S.GetActiveWorldQuests(2696, { 2437 })
@@ -112,20 +108,6 @@ describe("Sensors", function()
     assert.are.same({ 2413 }, S.FindZoneMaps({ "Harandar" }))
   end)
 
-  it("demande au jeu de charger une quête et ses récompenses", function()
-    local loaded = {}
-    _G.C_QuestLog = { RequestLoadQuestByID = function(id) loaded[#loaded + 1] = id end }
-    _G.C_TaskQuest = { RequestPreloadRewardData = function(id) requested[#requested + 1] = id end }
-    assert.is_true(S.RequestQuestData(42))
-    assert.are.same({ { 42 }, { 42 } }, { loaded, requested })
-  end)
-
-  it("ne lève pas d'erreur si le chargement d'une quête est impossible", function()
-    _G.C_QuestLog = {}
-    assert.is_nil(S.RequestQuestData(42))
-    assert.is_true(H.hasProblem(ns, "Lecture impossible"))
-  end)
-
   describe("Now", function()
     after_each(function() _G.GetServerTime, _G.time = nil, nil end)
 
@@ -138,33 +120,6 @@ describe("Sensors", function()
       _G.GetServerTime = nil
       _G.time = function() return 777 end
       assert.are.equal(777, S.Now())
-    end)
-  end)
-  describe("GetOfferedQuest", function()
-    after_each(function() _G.GetQuestID, _G.GetTitleText = nil, nil end)
-
-    it("renvoie l'identifiant et le titre de la quête proposée", function()
-      _G.GetQuestID = function() return 42 end
-      _G.GetTitleText = function() return "Une quête" end
-      local id, title = S.GetOfferedQuest()
-      assert.are.equal(42, id)
-      assert.are.equal("Une quête", title)
-    end)
-
-    it("renvoie nil quand l'identifiant vaut 0", function()
-      _G.GetQuestID = function() return 0 end
-      _G.GetTitleText = function() return "" end
-      assert.is_nil(S.GetOfferedQuest())
-    end)
-
-    it("renvoie nil sans erreur quand l'API manque", function()
-      _G.GetQuestID, _G.GetTitleText = nil, nil
-      assert.has_no.errors(function() assert.is_nil(S.GetOfferedQuest()) end)
-    end)
-
-    it("renvoie nil sans erreur quand l'API échoue", function()
-      _G.GetQuestID = function() error("boom") end
-      assert.has_no.errors(function() assert.is_nil(S.GetOfferedQuest()) end)
     end)
   end)
 end)

@@ -7,7 +7,6 @@ describe("State", function()
     ns = H.load()
     g = Sentier:NewGuide("rep-a", {
       title = "A", category = "Réputation", faction = 2696,
-      catalog = { [1] = { title = "Q1" }, [2] = { title = "Q2" }, [3] = { title = "Q3" } },
     })
   end)
 
@@ -30,11 +29,13 @@ describe("State", function()
     assert.are.equal("unknown", status(t))
   end)
 
-  it("une quête absente du catalogue est inconnue", function()
+  it("suit normalement une quête sans titre", function()
     local t = g:Quest(99, {})
-    assert.is_true(t.missing)
-    assert.are.equal("unknown", status(t))
+    assert.are.equal("todo", status(t))
+    ns.Sensors.done[99] = true
+    assert.are.equal("done", status(t))
   end)
+
 
   it("bloque une tâche tant que le renom requis n'est pas atteint", function()
     local t = g:Quest(1, { requires = { { renown = 8 } } })

@@ -27,7 +27,6 @@ function Registry:NewGuide(id, opts)
     title = opts.title or id,
     category = opts.category or L.DEFAULT_CATEGORY,
     faction = opts.faction,
-    catalog = opts.catalog or {},
     tasks = {},
     byId = {},
     order = {},
@@ -73,17 +72,7 @@ function Guide:Add(task)
 end
 
 function Guide:Quest(questId, opts)
-  local task = merge({ id = questId, type = "quest", source = "sidequests", reset = "none", questIds = { questId } }, opts)
-  local info = self.catalog[questId]
-  if info then
-    task.title = task.title or info.title
-    task.zone = task.zone or info.zone
-  end
-  if not task.title then
-    task.missing = true
-    Registry:Problem(L.PROBLEM_QUEST_MISSING:format(tostring(questId), self.id))
-  end
-  return self:Add(task)
+  return self:Add(merge({ id = questId, type = "quest", source = "sidequests", reset = "none", questIds = { questId } }, opts))
 end
 
 function Guide:Weekly(id, opts)
