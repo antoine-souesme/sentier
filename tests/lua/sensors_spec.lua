@@ -20,6 +20,14 @@ describe("Sensors", function()
     assert.is_false(S.IsQuestDone(2))
   end)
 
+  it("sait si une quête a été faite par un autre personnage du compte", function()
+    _G.C_QuestLog = { IsQuestFlaggedCompletedOnAccount = function(id) return id == 1 end }
+    assert.is_true(S.IsQuestDoneOnAccount(1))
+    assert.is_false(S.IsQuestDoneOnAccount(2))
+    _G.C_QuestLog = {}
+    assert.is_false(S.IsQuestDoneOnAccount(1))
+  end)
+
   it("renvoie nil et note un problème quand une fonction du jeu manque", function()
     _G.C_QuestLog = nil
     assert.is_nil(S.IsQuestDone(1))

@@ -34,6 +34,12 @@ function S.IsQuestDone(questId)
   return safe("READ_QUEST", function() return C_QuestLog.IsQuestFlaggedCompleted(questId) == true end)
 end
 
+-- Faite par n'importe quel personnage du compte. Faux si le jeu ne connaît pas cette fonction.
+function S.IsQuestDoneOnAccount(questId)
+  if not (C_QuestLog and C_QuestLog.IsQuestFlaggedCompletedOnAccount) then return false end
+  return safe("READ_QUEST", function() return C_QuestLog.IsQuestFlaggedCompletedOnAccount(questId) == true end) == true
+end
+
 function S.GetObjectiveProgress(questId, index)
   return safe("READ_OBJECTIVE", function()
     local objectives = C_QuestLog.GetQuestObjectives(questId)

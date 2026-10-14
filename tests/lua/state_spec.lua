@@ -29,6 +29,21 @@ describe("State", function()
     assert.are.equal("unknown", status(t))
   end)
 
+  it("compte comme faite une quête unique déjà faite par un autre personnage", function()
+    local t = g:Quest(1, {})
+    ns.Sensors.accountDone[1] = true
+    assert.are.equal("done", status(t))
+  end)
+
+  it("ne compte pas pour ce personnage une quête répétable faite par un autre", function()
+    local t = g:Quest(1, { reset = "daily" })
+    local w = g:Weekly("w", { questIds = { 2 } })
+    ns.Sensors.accountDone[1] = true
+    ns.Sensors.accountDone[2] = true
+    assert.are.equal("todo", status(t))
+    assert.are.equal("todo", status(w))
+  end)
+
   it("suit normalement une quête sans titre", function()
     local t = g:Quest(99, {})
     assert.are.equal("todo", status(t))

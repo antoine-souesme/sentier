@@ -51,6 +51,10 @@ function State:TaskStatus(guide, task)
 
   local done = false
   if task.questIds and #task.questIds > 0 then done = allDone(task.questIds) end
+  -- Une quête unique faite par un autre personnage du compte ne donne plus de réputation.
+  if done ~= true and task.type == "quest" and task.reset == "none" and ns.Sensors.IsQuestDoneOnAccount(task.id) then
+    done = true
+  end
   if done == true or ns.DB:IsMarked(guide, task) then return "done", info end
 
   local status, reason = checkRequires(task)

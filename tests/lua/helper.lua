@@ -25,6 +25,7 @@ function H.fakeSensors()
     weeklyStart = 900000,
     dailyUntil = 3600,
     done = {},
+    accountDone = {},
     renown = {},
     worldQuests = {},
     objectives = {},
@@ -37,6 +38,7 @@ function H.fakeSensors()
     if v == "error" then return nil end
     return v == true
   end
+  f.IsQuestDoneOnAccount = function(id) return f.accountDone[id] == true end
   f.GetRenown = function(faction) return f.renown[faction] end
   f.GetActiveWorldQuests = function(faction) return f.worldQuests[faction] end
   f.FindZoneMaps = function() return f.zoneMaps end
