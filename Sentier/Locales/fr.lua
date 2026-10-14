@@ -70,6 +70,7 @@ ns.L = {
   PROBLEM_EVENT = "Événement inconnu : %s",
   PROBLEM_NO_ZONE_MAPS = "Aucune carte trouvée pour les quêtes mondiales de %s",
   PROBLEM_WAYPOINT = "Repère impossible sur la carte %s",
+  PROBLEM_GRAIL = "Lecture de Grail impossible : %s",
   READ_QUEST = "quête",
   READ_OBJECTIVE = "objectif",
   READ_RENOWN = "renom",
