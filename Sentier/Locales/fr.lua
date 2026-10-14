@@ -59,6 +59,7 @@ ns.L = {
   DEBUG_NONE = "Sentier : aucun problème détecté.",
   DEBUG_MAPS = "Sentier : cartes des quêtes mondiales trouvées : %s",
   DEBUG_NO_MAPS = "aucune",
+  DEBUG_GRAIL = "Sentier : quêtes ajoutées depuis Grail : %d",
   HELP = "Sentier : /sentier (afficher ou masquer), /sentier debug",
 
   DEFAULT_CATEGORY = "Autres",
@@ -71,6 +72,8 @@ ns.L = {
   PROBLEM_NO_ZONE_MAPS = "Aucune carte trouvée pour les quêtes mondiales de %s",
   PROBLEM_WAYPOINT = "Repère impossible sur la carte %s",
   PROBLEM_GRAIL = "Lecture de Grail impossible : %s",
+  PROBLEM_NO_GRAIL = "Grail n'est pas chargé : les guides n'ont que leurs tâches écrites à la main.",
+  PROBLEM_GRAIL_NOT_READY = "Grail n'a pas fini de charger après 30 secondes.",
   READ_QUEST = "quête",
   READ_OBJECTIVE = "objectif",
   READ_RENOWN = "renom",

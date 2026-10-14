@@ -36,6 +36,7 @@ describe("Sentier.toc", function()
       "## SavedVariables: SentierDB",
       "## SavedVariablesPerCharacter: SentierCharDB",
       "## AddonCompartmentFunc: Sentier_OnAddonCompartmentClick",
+      "## Dependencies: Grail",
     }) do
       assert.truthy(text:find(needle, 1, true), needle)
     end

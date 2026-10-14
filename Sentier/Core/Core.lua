@@ -32,6 +32,7 @@ end
 function Core:Refresh()
   local guide = self:CurrentGuide()
   if not guide then return end
+  ns.GrailGuides:RefreshTitles(guide)
   local result = ns.State:Evaluate(guide)
   self.result = result
 
@@ -84,6 +85,27 @@ function Core:ScheduleReset()
   end)
 end
 
+-- Grail finit de charger ses données pendant la connexion : on vérifie chaque seconde, 30 fois au plus.
+function Core:WaitForGrail()
+  if not ns.GrailSource.Available() then
+    ns.Registry:Problem(L.PROBLEM_NO_GRAIL)
+    return
+  end
+  local tries = 0
+  local ticker
+  ticker = C_Timer.NewTicker(1, function()
+    tries = tries + 1
+    if ns.GrailSource.Ready() then
+      ticker:Cancel()
+      ns.GrailGuides:Fill()
+      self:RequestRefresh()
+    elseif tries >= 30 then
+      ticker:Cancel()
+      ns.Registry:Problem(L.PROBLEM_GRAIL_NOT_READY)
+    end
+  end)
+end
+
 Core:SetScript("OnEvent", function(self, event, ...)
   if event == "ADDON_LOADED" then
     if ... == addonName then
@@ -98,6 +120,7 @@ Core:SetScript("OnEvent", function(self, event, ...)
     end
     self:Refresh()
     self:ScheduleReset()
+    self:WaitForGrail()
   else
     self:RequestRefresh()
   end
@@ -133,6 +156,7 @@ local function printDebug()
   local maps = ns.Sensors.FindZoneMaps(worldQuestZones())
   local text = (maps and #maps > 0) and table.concat(maps, L.SEP_LIST) or L.DEBUG_NO_MAPS
   print(L.DEBUG_MAPS:format(text))
+  print(L.DEBUG_GRAIL:format(ns.GrailGuides.added))
 end
 
 SLASH_SENTIER1 = "/sentier"

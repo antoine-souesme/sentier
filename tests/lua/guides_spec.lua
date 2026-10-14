@@ -31,4 +31,10 @@ describe("Guides de Midnight", function()
     for _, g in ipairs(ns.Registry:List()) do assert.is_true(#g.order > 0, g.id) end
   end)
 
+  it("se remplissent avec Grail en suivant l'ordre des zones de Midnight", function()
+    for _, g in ipairs(ns.Registry:List()) do
+      assert.is_true(g.fromGrail, g.id)
+      assert.are.equal(ns.MidnightZones, g.zones, g.id)
+    end
+  end)
 end)

@@ -5,6 +5,7 @@
 ## Version: 0.1.0
 ## SavedVariables: SentierDB
 ## SavedVariablesPerCharacter: SentierCharDB
+## Dependencies: Grail
 ## OptionalDeps: TomTom
 ## IconTexture: Interface\Icons\INV_Misc_Map_01
 ## AddonCompartmentFunc: Sentier_OnAddonCompartmentClick

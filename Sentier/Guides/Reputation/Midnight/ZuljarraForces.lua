@@ -2,6 +2,7 @@ local _, ns = ...
 
 local G = Sentier:NewGuide("rep-midnight-zuljarra", {
   title = "Forces de Zul’jarra", category = "Réputation", faction = 2772,
+  fromGrail = true, zones = ns.MidnightZones,
 })
 
 -- Titres provisoires (source : guide Method 12.1), à corriger en jeu avec les noms exacts.
