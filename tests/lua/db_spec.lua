@@ -31,16 +31,32 @@ end)
 
 describe("DB", function()
   it("complète les réglages sans écraser ceux du joueur", function()
-    local ns = H.load({
-      account = { nav = "tomtom", sources = { rares = false }, collect = { quests = { [5] = { title = "x" } } } },
-    })
+    local ns = H.load({ account = { version = 2, nav = "tomtom", sources = { rares = false } } })
     assert.are.equal("tomtom", ns.DB.account.nav)
     assert.is_false(ns.DB.account.sources.rares)
     assert.is_true(ns.DB.account.sources.weekly)
-    assert.are.equal("x", ns.DB.account.collect.quests[5].title)
-    assert.is_true(ns.DB.account.collect.enabled)
+    assert.is_true(ns.DB.account.hideDone)
+    assert.are.same({ angle = 225, hidden = false }, ns.DB.account.minimap)
     assert.are.equal("step", ns.DB.char.tab)
     assert.are.same({}, ns.DB.char.marks)
+  end)
+
+  it("efface la collecte et cache les quêtes faites lors de la mise à jour", function()
+    local ns = H.load({ account = { hideDone = false, collect = { enabled = true, quests = { [5] = { title = "x" } } } } })
+    assert.is_nil(ns.DB.account.collect)
+    assert.is_true(ns.DB.account.hideDone)
+    assert.are.equal(2, ns.DB.account.version)
+  end)
+
+  it("respecte ensuite le choix d'afficher les quêtes faites", function()
+    local ns = H.load({ account = { version = 2, hideDone = false } })
+    assert.is_false(ns.DB.account.hideDone)
+  end)
+
+  it("cache les quêtes faites pour un nouveau joueur", function()
+    local ns = H.load()
+    assert.is_true(ns.DB.account.hideDone)
+    assert.are.equal(2, ns.DB.account.version)
   end)
 
   describe("coches et étapes passées", function()

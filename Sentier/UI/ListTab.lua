@@ -16,8 +16,21 @@ function ListTab:Create(parent)
   local p = CreateFrame("Frame", nil, parent)
   p:SetAllPoints()
 
+  -- Même réglage que « Masquer les tâches terminées » dans les réglages, en sens inverse.
+  local showDone = CreateFrame("CheckButton", nil, p, "UICheckButtonTemplate")
+  showDone:SetPoint("TOPLEFT", -2, 2)
+  showDone:SetSize(22, 22)
+  showDone.label = showDone:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  showDone.label:SetPoint("LEFT", showDone, "RIGHT", 2, 0)
+  showDone.label:SetText(L.SHOW_DONE)
+  showDone:SetScript("OnClick", function(self)
+    ns.DB.account.hideDone = not self:GetChecked()
+    ns.Core:Refresh()
+  end)
+  p.showDone = showDone
+
   local scroll = CreateFrame("ScrollFrame", nil, p, "UIPanelScrollFrameTemplate")
-  scroll:SetPoint("TOPLEFT")
+  scroll:SetPoint("TOPLEFT", 0, -24)
   scroll:SetPoint("BOTTOMRIGHT", -24, 0)
   local content = CreateFrame("Frame", nil, scroll)
   content:SetSize(1, 1)
@@ -70,6 +83,7 @@ function ListTab:Create(parent)
   end
 
   function p:Render(result)
+    self.showDone:SetChecked(not ns.DB.account.hideDone)
     local rows = ns.Models.List(result, ns.DB.account.hideDone)
     local width = self.scroll:GetWidth()
     for i, data in ipairs(rows) do

@@ -3,12 +3,14 @@ local _, ns = ...
 local DB = {}
 ns.DB = DB
 
+local VERSION = 2
+
 local ACCOUNT_DEFAULTS = {
   sources = { sidequests = true, weekly = true, daily = true, rares = true, worldquests = true },
   nav = "auto",
-  hideDone = false,
+  hideDone = true,
   locked = false,
-  collect = { enabled = true, quests = {} },
+  minimap = { angle = 225, hidden = false },
 }
 
 local CHAR_DEFAULTS = {
@@ -32,7 +34,15 @@ local function fill(target, defaults)
 end
 
 function DB:Init()
-  SentierDB = fill(type(SentierDB) == "table" and SentierDB or {}, ACCOUNT_DEFAULTS)
+  local account = type(SentierDB) == "table" and SentierDB or {}
+  -- Version 2 : les guides viennent de Grail. La collecte disparaît et les quêtes faites
+  -- sont cachées une fois pour tous ; le joueur peut ensuite les réafficher.
+  if (account.version or 1) < VERSION then
+    account.collect = nil
+    account.hideDone = true
+  end
+  account.version = VERSION
+  SentierDB = fill(account, ACCOUNT_DEFAULTS)
   SentierCharDB = fill(type(SentierCharDB) == "table" and SentierCharDB or {}, CHAR_DEFAULTS)
   self.account, self.char = SentierDB, SentierCharDB
 end

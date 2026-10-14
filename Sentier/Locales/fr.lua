@@ -42,6 +42,7 @@ ns.L = {
   NAV_tomtom = "TomTom",
   NAV_blizzard = "Repère du jeu",
   SETTINGS_HIDE_DONE = "Masquer les tâches terminées",
+  SHOW_DONE = "Afficher les quêtes faites",
   SETTINGS_LOCK = "Verrouiller la fenêtre",
   SETTINGS_CLEAR_SKIPS = "Remettre les étapes passées",
 
